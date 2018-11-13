@@ -24,7 +24,7 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
 def get_tag_info(tag: str, page: str) -> str:
     """Return information that has a tag"""
 
-    # finding the place where temp_tag is located
+    # finding the place where tag is located
     tag_size = len(tag)
     tag_index = page.find(tag)
     start_value = tag_size + tag_index
@@ -42,11 +42,11 @@ def get_tag_info(tag: str, page: str) -> str:
 acu_page = get_page_from_server(ACU_URL)
 rp5_page = get_page_from_server(RP5_URL)
 
-# ACCU weather tags info: location, temp, condition
+# ACU tags info: location, temp, condition
 ACU_TAGS = {'location': '<span class="current-city"><h1>',
             'temp': '<span class="large-temp">',
             'condition': '<span class="cond">'}
-# RP5 weather tags info: location, temp, wind
+# RP5 tags info: location, temp, wind
 RP5_TAGS = {'location': '<div id="pointNavi"><h1>',
             'temp': '<span class="t_0" style="display: block;">',
             'wind': '<span class="wv_0" style="">'}
