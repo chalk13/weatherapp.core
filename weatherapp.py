@@ -20,7 +20,7 @@ ACCU_TEMP_TAG = '<span class="large-temp">'
 ACCU_CONDITION = '<span class="cond">'
 
 
-def get_tag_info(tag, page):
+def get_tag_info(tag: str, page: str) -> str:
     """Return information that has a tag"""
 
     # finding the place where temp_tag is located
