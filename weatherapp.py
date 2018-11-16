@@ -18,7 +18,7 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     request = Request(page_url, headers=headers)
     page = urlopen(request).read()
 
-    return str(page)
+    return page.decode('utf-8')
 
 
 def get_tag_info(tag: str, page: str) -> str:
@@ -46,10 +46,10 @@ rp5_page = get_page_from_server(RP5_URL)
 ACU_TAGS = {'location': '<span class="current-city"><h1>',
             'temp': '<span class="large-temp">',
             'condition': '<span class="cond">'}
-# RP5 tags info: location, temp, wind
+# RP5 tags info: location, temp, condition
 RP5_TAGS = {'location': '<div id="pointNavi"><h1>',
             'temp': '<span class="t_0" style="display: block;">',
-            'wind': '<span class="wv_0" style="">'}
+            'condition': '<div class="cn5" onmouseover="tooltip(this, \'<b>'}
 
 acu_location = get_tag_info(ACU_TAGS['location'], acu_page)
 acu_temp = get_tag_info(ACU_TAGS['temp'], acu_page)
@@ -57,7 +57,7 @@ acu_condition = get_tag_info(ACU_TAGS['condition'], acu_page)
 
 rp5_location = get_tag_info(RP5_TAGS['location'], rp5_page)
 rp5_temp = get_tag_info(RP5_TAGS['temp'], rp5_page)
-rp5_wind = get_tag_info(RP5_TAGS['wind'], rp5_page)
+rp5_condition = get_tag_info(RP5_TAGS['condition'], rp5_page)
 
 print("AccuWeather website info:\n------------------------")
 print(f"Location: {acu_location}")
@@ -65,4 +65,4 @@ print(f"Temperature: {html.unescape(acu_temp)}\nCurrent state: {acu_condition}")
 
 print("\nRP5 website info:\n----------------")
 print(f"Location: {rp5_location}")
-print(f"Temperature: {html.unescape(rp5_temp)}\nWind: {rp5_wind}")
+print(f"Temperature: {html.unescape(rp5_temp)}\nCurrent state: {rp5_condition}")
