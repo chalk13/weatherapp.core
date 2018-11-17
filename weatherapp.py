@@ -4,6 +4,7 @@ Resources: AccuWeather, Rp5, Sinoptik
 Packages: urllib
 """
 import html
+import re
 from urllib.request import urlopen, Request
 
 # start pages for getting information
@@ -49,9 +50,13 @@ ACU_TAGS = {'location': '<span class="current-city"><h1>',
             'temp': '<span class="large-temp">',
             'condition': '<span class="cond">'}
 # RP5 tags info: location, temp, condition
+
+# through constant changes - use regular expression to get status information
+condition_result = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>', rp5_page)
+
 RP5_TAGS = {'location': '<div id="pointNavi"><h1>',
             'temp': '<span class="t_0" style="display: block;">',
-            'condition': '<div class="cn5" onmouseover="tooltip(this, \'<b>'}
+            'condition': condition_result.group(0)}
 # Sinoptik tags info: location, temp, condition
 SIN_TAGS = {'location': '<h1 class="isMain"> <strong>Погода</strong>',
             'temp': '<p class="today-temp">',
