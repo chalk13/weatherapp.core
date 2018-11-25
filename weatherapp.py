@@ -50,9 +50,12 @@ def get_weather_info(page, tags):
     return tuple(get_tag_info(tag, page) for tag in tags)
 
 
-def program_output(a, b, c):
-    """"""
-    pass
+def program_output(weather_site, location, temp, condition):
+    """Print the application output in readable form"""
+
+    print(f'\n {weather_site}')
+    print(f'Location: {location}')
+    print(f'Temperature: {html.unescape(temp)}\nCurrent state: {condition}')
 
 
 acu_page = get_page_from_server(ACU_URL)
