@@ -8,7 +8,7 @@ import re
 from urllib.request import urlopen, Request
 
 # start pages for getting information
-ACU_URL = "https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505"
+ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
 RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 SIN_URL = 'https://ua.sinoptik.ua'
 
@@ -33,12 +33,22 @@ def get_tag_info(tag: str, page: str) -> str:
 
     result = ''
     for item in page[start_value:]:
-        if item != "<":
+        if item != '<':
             result += item
         else:
             break
 
     return result
+
+
+def get_weather_info(page, tags):
+    """"""
+    pass
+
+
+def program_output(a, b, c):
+    """"""
+    pass
 
 
 acu_page = get_page_from_server(ACU_URL)
@@ -85,3 +95,20 @@ print(f"Temperature: {html.unescape(rp5_temp)}\nCurrent state: {rp5_condition}")
 print("\nSinoptik website info:\n---------------------")
 print(f"Location: {sin_location}")
 print(f"Temperature: {html.unescape(sin_temp)}\nCurrent state: {sin_condition}")
+
+
+def main():
+    """Main entry point"""
+
+    weather_sites = {'ACCUWEATHER': (ACU_URL, ACU_TAGS),
+                     'RP5': (RP5_URL, RP5_TAGS),
+                     'SINOPTIK': (SIN_URL, SIN_TAGS)}
+    for site in weather_sites:
+        url, tags = weather_sites[site]
+        content = get_page_from_server(url)
+        location, temp, condition = get_weather_info(content, tags)
+        program_output(location, temp, condition)
+
+
+if __name__ == '__main__':
+    main()
