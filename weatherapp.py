@@ -13,11 +13,14 @@ RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 SIN_URL = 'https://ua.sinoptik.ua'
 
 
+def get_request_headers():
+    return {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
+
+
 def get_page_from_server(page_url: str) -> str:  # getting page from server
     """Return information about the page in the string format"""
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
-    request = Request(page_url, headers=headers)
+    request = Request(page_url, headers=get_request_headers())
     page = urlopen(request).read()
 
     return page.decode('utf-8')
