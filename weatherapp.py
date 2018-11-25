@@ -50,24 +50,34 @@ def get_weather_info(page, tags):
 def program_output(weather_site, location, temp, condition):
     """Print the application output in readable form"""
 
-    def border_msg(msg, state):
-        row = len(msg + state) + 5
-        h = ''.join(['+'] + ['-' * row] + ['+'])
-        result = h + '\n'"| " + msg + " | " + state + " |" + '\n' + h
+    length_column_1 = len(location)
+    length_column_2 = len(condition)
+
+    def border_line(column_1, column_2):
+        """Print a line for dividing information"""
+
+        line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
+        return line
+
+    def status_msg(msg, state):
+        """Print weather information"""
+
+        result = " | " + msg + (' ' * (len(location) - len(msg))) + \
+                 " | " + state + (' ' * (len(condition) - len(state))) + " |" + '\n'
         return result
 
-    print(f'{weather_site}:')
-    print(f'{border_msg(location, "Now")}')
-    print(f'{border_msg("Temperature", html.unescape(temp))}')
-    print(f'{border_msg("Current state", condition)}\n')
+    print(f'{weather_site}:\n', border_line(length_column_1, length_column_2))
+    print(f'{status_msg(location, "Now")}', border_line(length_column_1, length_column_2))
+    print(f'{status_msg("Temperature", html.unescape(temp))}', end='')
+    print(f'{status_msg("Current state", condition)}', border_line(length_column_1, length_column_2), '\n')
 
 
 def main():
     """Main entry point"""
 
     weather_sites = {'ACCUWEATHER': (ACU_URL, ACU_TAGS),
-                     'RP5': (RP5_URL, RP5_TAGS),
-                     'SINOPTIK': (SIN_URL, SIN_TAGS)}
+                     'RP5': (RP5_URL, RP5_TAGS)}
+#                     'SINOPTIK': (SIN_URL, SIN_TAGS)}
     for site in weather_sites:
         url, tags = weather_sites[site]
         content = get_page_from_server(url)
