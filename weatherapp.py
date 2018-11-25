@@ -7,11 +7,6 @@ import html
 import re
 from urllib.request import urlopen, Request
 
-# start pages for getting information
-ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
-RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
-SIN_URL = 'https://ua.sinoptik.ua'
-
 
 def get_request_headers():
     return {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
@@ -53,55 +48,9 @@ def get_weather_info(page, tags):
 def program_output(weather_site, location, temp, condition):
     """Print the application output in readable form"""
 
-    print(f'\n {weather_site}')
+    print(f'{weather_site}')
     print(f'Location: {location}')
     print(f'Temperature: {html.unescape(temp)}\nCurrent state: {condition}')
-
-
-acu_page = get_page_from_server(ACU_URL)
-rp5_page = get_page_from_server(RP5_URL)
-sin_page = get_page_from_server(SIN_URL)
-
-# ACU tags info: location, temp, condition
-ACU_TAGS = {'location': '<span class="current-city"><h1>',
-            'temp': '<span class="large-temp">',
-            'condition': '<span class="cond">'}
-# RP5 tags info: location, temp, condition
-
-# through constant changes - use regular expression to get status information
-condition_result = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>', rp5_page)
-
-RP5_TAGS = {'location': '<div id="pointNavi"><h1>',
-            'temp': '<span class="t_0" style="display: block;">',
-            'condition': condition_result.group(0)}
-# Sinoptik tags info: location, temp, condition
-SIN_TAGS = {'location': '<h1 class="isMain"> <strong>Погода</strong>',
-            'temp': '<p class="today-temp">',
-            'condition': '<div class="description"> <!--noindex-->'}
-
-acu_location = get_tag_info(ACU_TAGS['location'], acu_page)
-acu_temp = get_tag_info(ACU_TAGS['temp'], acu_page)
-acu_condition = get_tag_info(ACU_TAGS['condition'], acu_page)
-
-rp5_location = get_tag_info(RP5_TAGS['location'], rp5_page)
-rp5_temp = get_tag_info(RP5_TAGS['temp'], rp5_page)
-rp5_condition = get_tag_info(RP5_TAGS['condition'], rp5_page)
-
-sin_location = get_tag_info(SIN_TAGS['location'], sin_page)
-sin_temp = get_tag_info(SIN_TAGS['temp'], sin_page)
-sin_condition = get_tag_info(SIN_TAGS['condition'], sin_page)
-
-print("AccuWeather website info:\n------------------------")
-print(f"Location: {acu_location}")
-print(f"Temperature: {html.unescape(acu_temp)}\nCurrent state: {acu_condition}")
-
-print("\nRP5 website info:\n----------------")
-print(f"Location: {rp5_location}")
-print(f"Temperature: {html.unescape(rp5_temp)}\nCurrent state: {rp5_condition}")
-
-print("\nSinoptik website info:\n---------------------")
-print(f"Location: {sin_location}")
-print(f"Temperature: {html.unescape(sin_temp)}\nCurrent state: {sin_condition}")
 
 
 def main():
@@ -114,7 +63,30 @@ def main():
         url, tags = weather_sites[site]
         content = get_page_from_server(url)
         location, temp, condition = get_weather_info(content, tags)
-        program_output(location, temp, condition)
+        program_output(site, location, temp, condition)
+
+
+# start pages for getting information
+ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
+RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
+SIN_URL = 'https://ua.sinoptik.ua'
+
+# ACU tags info: location, temp, condition
+ACU_TAGS = {'<span class="current-city"><h1>',
+            '<span class="large-temp">',
+            '<span class="cond">'}
+# RP5 tags info: location, temp, condition
+
+# through constant changes - use regular expression to get status information
+condition_result = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>', get_page_from_server(RP5_URL))
+
+RP5_TAGS = {'<div id="pointNavi"><h1>',
+            '<span class="t_0" style="display: block;">',
+            condition_result.group(0)}
+# Sinoptik tags info: location, temp, condition
+SIN_TAGS = {'<h1 class="isMain"> <strong>Погода</strong>',
+            '<p class="today-temp">',
+            '<div class="description"> <!--noindex-->'}
 
 
 if __name__ == '__main__':
