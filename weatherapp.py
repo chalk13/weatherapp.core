@@ -45,8 +45,9 @@ def get_tag_info(tag: str, page: str) -> str:
 
 
 def get_weather_info(page, tags):
-    """"""
-    pass
+    """Return information collected from tags"""
+
+    return tuple(get_tag_info(tag, page) for tag in tags)
 
 
 def program_output(a, b, c):
