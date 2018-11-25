@@ -50,9 +50,16 @@ def get_weather_info(page, tags):
 def program_output(weather_site, location, temp, condition):
     """Print the application output in readable form"""
 
+    def border_msg(msg, state):
+        row = len(msg + state) + 5
+        h = ''.join(['+'] + ['-' * row] + ['+'])
+        result = h + '\n'"| " + msg + " | " + state + " |" + '\n' + h
+        return result
+
     print(f'{weather_site}:')
-    print(f'Location: {location}')
-    print(f'Temperature: {html.unescape(temp)}\nCurrent state: {condition}')
+    print(f'{border_msg(location, "Now")}')
+    print(f'{border_msg("Temperature", html.unescape(temp))}')
+    print(f'{border_msg("Current state", condition)}\n')
 
 
 def main():
@@ -77,15 +84,15 @@ SIN_URL = 'https://ua.sinoptik.ua'
 ACU_TAGS = ('<span class="current-city"><h1>',
             '<span class="large-temp">',
             '<span class="cond">')
-# RP5 tags info: location, temp, condition
 
 # through constant changes - use regular expression to get status information
 CONDITION_RESULT = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>',
                              get_page_from_server(RP5_URL))
-
+# RP5 tags info: location, temp, condition
 RP5_TAGS = ('<div id="pointNavi"><h1>',
             '<span class="t_0" style="display: block;">',
             CONDITION_RESULT.group(0))
+
 # Sinoptik tags info: location, temp, condition
 SIN_TAGS = ('<h1 class="isMain"> <strong>Погода</strong>',
             '<p class="today-temp">',
