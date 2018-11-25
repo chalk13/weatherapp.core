@@ -79,11 +79,16 @@ def main():
     weather_sites = {'ACCUWEATHER': (ACU_URL, ACU_TAGS),
                      'RP5': (RP5_URL, RP5_TAGS),
                      'SINOPTIK': (SIN_URL, SIN_TAGS)}
-    for site in weather_sites:
-        url, tags = weather_sites[site]
-        content = get_page_from_server(url)
-        location, temp, condition = get_weather_info(content, tags)
-        program_output(site, location, temp, condition)
+
+    print('Please choose weather website from the list bellow:')
+    for position, site in enumerate(weather_sites, 1):
+        print(position, site)
+    site = input('Enter your choice: ')
+
+    url, tags = weather_sites[site]
+    content = get_page_from_server(url)
+    location, temp, condition = get_weather_info(content, tags)
+    program_output(site, location, temp, condition)
 
 
 # start pages for getting information
