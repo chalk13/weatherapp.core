@@ -74,22 +74,22 @@ RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 SIN_URL = 'https://ua.sinoptik.ua'
 
 # ACU tags info: location, temp, condition
-ACU_TAGS = {'<span class="current-city"><h1>',
+ACU_TAGS = ('<span class="current-city"><h1>',
             '<span class="large-temp">',
-            '<span class="cond">'}
+            '<span class="cond">')
 # RP5 tags info: location, temp, condition
 
 # through constant changes - use regular expression to get status information
 CONDITION_RESULT = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>',
                              get_page_from_server(RP5_URL))
 
-RP5_TAGS = {'<div id="pointNavi"><h1>',
+RP5_TAGS = ('<div id="pointNavi"><h1>',
             '<span class="t_0" style="display: block;">',
-            CONDITION_RESULT.group(0)}
+            CONDITION_RESULT.group(0))
 # Sinoptik tags info: location, temp, condition
-SIN_TAGS = {'<h1 class="isMain"> <strong>Погода</strong>',
+SIN_TAGS = ('<h1 class="isMain"> <strong>Погода</strong>',
             '<p class="today-temp">',
-            '<div class="description"> <!--noindex-->'}
+            '<div class="description"> <!--noindex-->')
 
 
 if __name__ == '__main__':
