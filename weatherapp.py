@@ -1,10 +1,12 @@
 """Weather application project.
 
-Resources: AccuWeather, Rp5, Sinoptik
+Resources: AccuWeather, RP5, Sinoptik
 Packages: urllib
 """
+import argparse
 import html
 import re
+import sys
 from urllib.request import urlopen, Request
 
 
@@ -73,22 +75,32 @@ def program_output(weather_site, location, temp, condition):
           border_line(length_column_1, length_column_2))
 
 
-def main():
+def main(argv):
     """Main entry point"""
 
-    weather_sites = {'ACCUWEATHER': (ACU_URL, ACU_TAGS),
+    known_commands = {'accu': 'AccuWeather', 'rp5': 'RP5', 'sin': 'Sinoptik'}
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', help='Command to choose weather website', nargs=1)
+    params = parser.parse_args(argv)
+
+    weather_sites = {'AccuWeather': (ACU_URL, ACU_TAGS),
                      'RP5': (RP5_URL, RP5_TAGS),
-                     'SINOPTIK': (SIN_URL, SIN_TAGS)}
+                     'Sinoptik': (SIN_URL, SIN_TAGS)}
 
-    print('Please choose weather website from the list bellow:')
-    for position, site in enumerate(weather_sites, 1):
-        print(position, site)
-    site = input('Enter your choice: ')
+    if params.command:
+        command = params.command[0]
+        if command in known_commands:
+            weather_sites = {known_commands[command]: weather_sites[known_commands[command]]}
+        else:
+            print('Unknown command provided.')
+            sys.exit(1)
 
-    url, tags = weather_sites[site]
-    content = get_page_from_server(url)
-    location, temp, condition = get_weather_info(content, tags)
-    program_output(site, location, temp, condition)
+    for site in weather_sites:
+        url, tags = weather_sites[site]
+        content = get_page_from_server(url)
+        location, temp, condition = get_weather_info(content, tags)
+        program_output(site, location, temp, condition)
 
 
 # start pages for getting information
@@ -96,7 +108,7 @@ ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505
 RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 SIN_URL = 'https://ua.sinoptik.ua'
 
-# ACU tags info: location, temp, condition
+# AccuWeather tags info: location, temp, condition
 ACU_TAGS = ('<span class="current-city"><h1>',
             '<span class="large-temp">',
             '<span class="cond">')
@@ -116,4 +128,4 @@ SIN_TAGS = ('<h1 class="isMain"> <strong>Погода</strong>',
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
