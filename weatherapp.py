@@ -60,16 +60,16 @@ def get_weather_info(page):
                 weather_details = current_day.find('div', attrs={'id': 'detail-now'})
                 condition = weather_details.find('span', class_='cond')
                 if condition:
-                    weather_info['cond'] = condition.text
+                    weather_info['Condition'] = condition.text
                 temp = weather_details.find('span', class_='large-temp')
                 if temp:
-                    weather_info['temp'] = temp.text
+                    weather_info['Temperature'] = temp.text
                 feal_temp = weather_details.find('span', class_='small-temp')
                 if feal_temp:
-                    weather_info['feal_temp'] = feal_temp.text
+                    weather_info['RealFeel'] = feal_temp.text
                 wind_info = weather_details.find_all('li', class_='wind')
                 if wind_info:
-                    weather_info['wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
+                    weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
 
     return weather_info
 
