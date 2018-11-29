@@ -38,7 +38,7 @@ def get_weather_info(page):
             current_day_page = get_page_from_server(current_day_url)
             if current_day_page:
                 current_day = BeautifulSoup(current_day_page, 'html.parser')
-                weather_details = current_day.find('div', attrs={'id': 'detail-now', })
+                weather_details = current_day.find('div', attrs={'id': 'detail-now'})
                 condition = weather_details.find('span', class_='cond')
                 if condition:
                     weather_info['Condition'] = condition.text
