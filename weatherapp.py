@@ -58,14 +58,10 @@ def get_weather_info(page):
 def program_output(info):
     """Print the application output in readable form"""
 
-#    length_column_1 = max(len(location), len('Temperature'), len('Current state'))
-#    length_column_2 = max(len('Now'), len(temp), len(condition))
+    length_column_1 = max(len(key) for key in info.keys())
+    length_column_2 = max(len(value) for value in info.values())
 
-    for key, value in info.items():
-        print(f'{key}: {html.unescape(value)}')
-
-
-'''    def border_line(column_1, column_2):
+    def border_line(column_1, column_2):
         """Print a line for dividing information"""
 
         line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
@@ -74,15 +70,16 @@ def program_output(info):
     def status_msg(msg, state):
         """Print weather information"""
 
-        result = " | " + msg + (' ' * (length_column_1 - len(msg))) + \
+        result = "| " + msg + (' ' * (length_column_1 - len(msg))) + \
                  " | " + state + (' ' * (length_column_2 - len(state))) + " |" + '\n'
         return result
 
-    print(f'{weather_site}:\n', border_line(length_column_1, length_column_2))
-    print(f'{status_msg(location, "Now")}', border_line(length_column_1, length_column_2))
-    print(f'{status_msg("Temperature", html.unescape(temp))}', end='')
-    print(f'{status_msg("Current state", condition)}',
-          border_line(length_column_1, length_column_2))'''
+    print(border_line(length_column_1, length_column_2))
+
+    for key, value in info.items():
+        print(status_msg(key, value), end='')
+
+    print(border_line(length_column_1, length_column_2))
 
 
 def main(argv):
