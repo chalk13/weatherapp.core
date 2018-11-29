@@ -5,7 +5,6 @@ Packages: urllib
 """
 import argparse
 import html
-import re
 import sys
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
@@ -26,24 +25,6 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     return page.decode('utf-8')
 
 
-def get_tag_info(tag: str, page: str) -> str:
-    """Return information that has a tag"""
-
-    # finding the place where tag is located
-    tag_size = len(tag)
-    tag_index = page.find(tag)
-    start_value = tag_size + tag_index
-
-    result = ''
-    for item in page[start_value:]:
-        if item != '<':
-            result += item
-        else:
-            break
-
-    return result
-
-
 def get_weather_info(page):
     """Return information collected from tags"""
 
@@ -57,7 +38,7 @@ def get_weather_info(page):
             current_day_page = get_page_from_server(current_day_url)
             if current_day_page:
                 current_day = BeautifulSoup(current_day_page, 'html.parser')
-                weather_details = current_day.find('div', attrs={'id': 'detail-now'})
+                weather_details = current_day.find('div', attrs={'id': 'detail-now', })
                 condition = weather_details.find('span', class_='cond')
                 if condition:
                     weather_info['Condition'] = condition.text
@@ -113,9 +94,9 @@ def main(argv):
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
     params = parser.parse_args(argv)
 
-    weather_sites = {'AccuWeather': (ACU_URL, ACU_TAGS),
-                     'RP5': (RP5_URL, RP5_TAGS),
-                     'Sinoptik': (SIN_URL, SIN_TAGS)}
+    weather_sites = {'AccuWeather': ACU_URL,
+                     'RP5': RP5_URL,
+                     'Sinoptik': SIN_URL}
 
     if params.command:
         command = params.command[0]
@@ -126,34 +107,15 @@ def main(argv):
             sys.exit(1)
 
     for site in weather_sites:
-        url, tags = weather_sites[site]
+        url = weather_sites[site]
         content = get_page_from_server(url)
         program_output(get_weather_info(content))
-#        program_output(site, location, temp, condition)
 
 
 # start pages for getting information
 ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
 RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 SIN_URL = 'https://ua.sinoptik.ua'
-
-# AccuWeather tags info: location, temp, condition
-ACU_TAGS = ('<span class="current-city"><h1>',
-            '<span class="large-temp">',
-            '<span class="cond">')
-
-# through constant changes - use regular expression to get status information
-CONDITION_RESULT = re.search(r'<div class="..." onmouseover="tooltip\(this, \'<b>',
-                             get_page_from_server(RP5_URL))
-# RP5 tags info: location, temp, condition
-RP5_TAGS = ('<div id="pointNavi"><h1>',
-            '<span class="t_0" style="display: block;">',
-            CONDITION_RESULT.group(0))
-
-# Sinoptik tags info: location, temp, condition
-SIN_TAGS = ('<h1 class="isMain"> <strong>Погода</strong>',
-            '<p class="today-temp">',
-            '<div class="description"> <!--noindex-->')
 
 
 if __name__ == '__main__':
