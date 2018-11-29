@@ -8,6 +8,7 @@ import html
 import re
 import sys
 from urllib.request import urlopen, Request
+from bs4 import BeautifulSoup
 
 
 def get_request_headers():
@@ -43,19 +44,47 @@ def get_tag_info(tag: str, page: str) -> str:
     return result
 
 
-def get_weather_info(page, tags):
+def get_weather_info(page):
     """Return information collected from tags"""
 
-    return tuple(get_tag_info(tag, page) for tag in tags)
+    weather_page = BeautifulSoup(page, 'html.parser')
+    current_day_selection = weather_page.find('li', class_='night current first cl')
+
+    weather_info = {}
+    if current_day_selection:
+        current_day_url = current_day_selection.find('a').attrs['href']
+        if current_day_url:
+            current_day_page = get_page_from_server(current_day_url)
+            if current_day_page:
+                current_day = BeautifulSoup(current_day_page, 'html.parser')
+                weather_details = current_day.find('div', attrs={'id': 'detail-now'})
+                condition = weather_details.find('span', class_='cond')
+                if condition:
+                    weather_info['cond'] = condition.text
+                temp = weather_details.find('span', class_='large-temp')
+                if temp:
+                    weather_info['temp'] = temp.text
+                feal_temp = weather_details.find('span', class_='small-temp')
+                if feal_temp:
+                    weather_info['feal_temp'] = feal_temp.text
+                wind_info = weather_details.find_all('li', class_='wind')
+                if wind_info:
+                    weather_info['wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
+
+    return weather_info
 
 
-def program_output(weather_site, location, temp, condition):
+def program_output(info):
     """Print the application output in readable form"""
 
-    length_column_1 = max(len(location), len('Temperature'), len('Current state'))
-    length_column_2 = max(len('Now'), len(temp), len(condition))
+#    length_column_1 = max(len(location), len('Temperature'), len('Current state'))
+#    length_column_2 = max(len('Now'), len(temp), len(condition))
 
-    def border_line(column_1, column_2):
+    for key, value in info.items():
+        print(f'{key}: {html.unescape(value)}')
+
+
+'''    def border_line(column_1, column_2):
         """Print a line for dividing information"""
 
         line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
@@ -72,7 +101,7 @@ def program_output(weather_site, location, temp, condition):
     print(f'{status_msg(location, "Now")}', border_line(length_column_1, length_column_2))
     print(f'{status_msg("Temperature", html.unescape(temp))}', end='')
     print(f'{status_msg("Current state", condition)}',
-          border_line(length_column_1, length_column_2))
+          border_line(length_column_1, length_column_2))'''
 
 
 def main(argv):
@@ -99,8 +128,8 @@ def main(argv):
     for site in weather_sites:
         url, tags = weather_sites[site]
         content = get_page_from_server(url)
-        location, temp, condition = get_weather_info(content, tags)
-        program_output(site, location, temp, condition)
+        program_output(get_weather_info(content))
+#        program_output(site, location, temp, condition)
 
 
 # start pages for getting information
