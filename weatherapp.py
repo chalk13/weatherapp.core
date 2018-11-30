@@ -39,12 +39,13 @@ def get_weather_accu(page):
             if current_day_page:
                 current_day = BeautifulSoup(current_day_page, 'html.parser')
                 weather_details = current_day.find('div', attrs={'id': 'detail-now'})
-                condition = weather_details.find('span', class_='cond')
-                if condition:
-                    weather_info['Condition'] = condition.text
                 temp = weather_details.find('span', class_='large-temp')
                 if temp:
                     weather_info['Temperature'] = temp.text
+                condition = weather_details.find('span', class_='cond')
+                if condition:
+                    weather_info['Condition'] = condition.text
+
                 feel_temp = weather_details.find('span', class_='small-temp')
                 if feel_temp:
                     weather_info['RealFeel'] = feel_temp.text
@@ -58,18 +59,31 @@ def get_weather_accu(page):
 def get_weather_rp5(page):
     """Return information collected from RP5"""
 
-#    weather_page = BeautifulSoup(page, 'html.parser')
-#    current_day_selection = weather_page.find('div', id='FheaderContent')
+    weather_page = BeautifulSoup(page, 'html.parser')
+    current_day_temperature = weather_page.find('div', class_='ArchiveTemp')
+    current_day_weather_details = weather_page.find('div', id='forecastShort-content')
 
-#    weather_info = {}
-#    if current_day_selection:
-#        current_day_url = current_day_selection.find('a').attrs['href']
-#        print(current_day_url)
-#        temperature = current_day_selection.find('span', class_='t_0')
-#        if temperature:
-#            weather_info['Temperature'] = temperature.text
+    weather_info = {}
+    if current_day_temperature:
+        temperature = current_day_temperature.find('span', class_='t_0')
+        if temperature:
+            weather_info['Temperature'] = temperature.text
+    if current_day_weather_details:
+        condition = current_day_weather_details.find('b')
+        if condition:
+            start_cond = condition.text.find(',', condition.text.find(',') + 1) + 2
+            end_cond = condition.text.find(',', start_cond + 1)
+            weather_info['Condition'] = condition.text[start_cond:end_cond]
+        today_expect = current_day_weather_details.find('span', class_='t_0')
+        if today_expect:
+            weather_info['Expect'] = today_expect.text[:-3]
+        if condition:
+            first_sentence_end = condition.text.find('. ')
+            first_sentence = condition.text[:first_sentence_end]
+            start = first_sentence.rfind(',') + 2
+            weather_info['Wind'] = first_sentence[start:]
 
-#    return weather_info
+    return weather_info
 
 
 def program_output(info: dict):
