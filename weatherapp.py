@@ -1,6 +1,6 @@
 """Weather application project.
 
-Resources: AccuWeather, RP5, Sinoptik
+Resources: AccuWeather, RP5
 Packages: urllib
 """
 import argparse
@@ -25,8 +25,8 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     return page.decode('utf-8')
 
 
-def get_weather_info(page):
-    """Return information collected from tags"""
+def get_weather_accu(page):
+    """Return information collected from AccuWeather"""
 
     weather_page = BeautifulSoup(page, 'html.parser')
     current_day_selection = weather_page.find('li', class_='night current first cl')
@@ -45,9 +45,9 @@ def get_weather_info(page):
                 temp = weather_details.find('span', class_='large-temp')
                 if temp:
                     weather_info['Temperature'] = temp.text
-                feal_temp = weather_details.find('span', class_='small-temp')
-                if feal_temp:
-                    weather_info['RealFeel'] = feal_temp.text
+                feel_temp = weather_details.find('span', class_='small-temp')
+                if feel_temp:
+                    weather_info['RealFeel'] = feel_temp.text
                 wind_info = weather_details.find_all('li', class_='wind')
                 if wind_info:
                     weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
@@ -55,19 +55,36 @@ def get_weather_info(page):
     return weather_info
 
 
-def program_output(info):
+def get_weather_rp5(page):
+    """Return information collected from RP5"""
+
+#    weather_page = BeautifulSoup(page, 'html.parser')
+#    current_day_selection = weather_page.find('div', id='FheaderContent')
+
+#    weather_info = {}
+#    if current_day_selection:
+#        current_day_url = current_day_selection.find('a').attrs['href']
+#        print(current_day_url)
+#        temperature = current_day_selection.find('span', class_='t_0')
+#        if temperature:
+#            weather_info['Temperature'] = temperature.text
+
+#    return weather_info
+
+
+def program_output(info: dict):
     """Print the application output in readable form"""
 
     length_column_1 = max(len(key) for key in info.keys())
     length_column_2 = max(len(value) for value in info.values())
 
-    def border_line(column_1, column_2):
+    def border_line(column_1: int, column_2: int) -> str:
         """Print a line for dividing information"""
 
         line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
         return line
 
-    def status_msg(msg, state):
+    def status_msg(msg: str, state: str) -> str:
         """Print weather information"""
 
         result = "| " + msg + (' ' * (length_column_1 - len(msg))) + \
@@ -77,7 +94,7 @@ def program_output(info):
     print(border_line(length_column_1, length_column_2))
 
     for key, value in info.items():
-        print(status_msg(key, value), end='')
+        print(status_msg(key, html.unescape(value)), end='')
 
     print(border_line(length_column_1, length_column_2))
 
@@ -85,15 +102,14 @@ def program_output(info):
 def main(argv):
     """Main entry point"""
 
-    known_commands = {'accu': 'AccuWeather', 'rp5': 'RP5', 'sin': 'Sinoptik'}
+    known_commands = {'accu': 'AccuWeather',
+                      'rp5': 'RP5'}
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
     params = parser.parse_args(argv)
 
-    weather_sites = {'AccuWeather': ACU_URL,
-                     'RP5': RP5_URL,
-                     'Sinoptik': SIN_URL}
+    weather_sites = {'AccuWeather': ACU_URL, 'RP5': RP5_URL}
 
     if params.command:
         command = params.command[0]
@@ -106,13 +122,15 @@ def main(argv):
     for site in weather_sites:
         url = weather_sites[site]
         content = get_page_from_server(url)
-        program_output(get_weather_info(content))
+        if site == 'AccuWeather':
+            program_output(get_weather_accu(content))
+        elif site == 'RP5':
+            program_output(get_weather_rp5(content))
 
 
 # start pages for getting information
 ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
 RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
-SIN_URL = 'https://ua.sinoptik.ua'
 
 
 if __name__ == '__main__':
