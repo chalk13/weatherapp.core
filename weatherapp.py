@@ -4,6 +4,7 @@ Resources: AccuWeather, RP5
 Packages: urllib
 """
 import argparse
+import csv
 import html
 import sys
 from urllib.request import urlopen, Request
@@ -86,6 +87,16 @@ def get_weather_rp5(page):
     return weather_info
 
 
+def write_info_to_csv(info: dict):
+    """Write data to a CSV file"""
+
+    output_file = open('weather_data.csv', 'w', newline='')
+    output_writer = csv.writer(output_file)
+    for key, value in info.items():
+        output_writer.writerow([key, value])
+    output_file.close()
+
+
 def program_output(info: dict):
     """Print the application output in readable form"""
 
@@ -138,8 +149,10 @@ def main(argv):
         content = get_page_from_server(url)
         if site == 'AccuWeather':
             program_output(get_weather_accu(content))
+            write_info_to_csv(get_weather_accu(content))
         elif site == 'RP5':
             program_output(get_weather_rp5(content))
+            write_info_to_csv(get_weather_rp5(content))
 
 
 # start pages for getting information
