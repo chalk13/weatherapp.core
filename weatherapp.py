@@ -92,6 +92,7 @@ def write_info_to_csv(info: dict):
 
     output_file = open('weather_data.csv', 'w', newline='')
     output_writer = csv.writer(output_file)
+    output_writer.writerow(['Parameters', 'Description'])
     for key, value in info.items():
         output_writer.writerow([key, value])
     output_file.close()
