@@ -129,7 +129,9 @@ def main(argv):
     """Main entry point"""
 
     known_commands = {'accu': 'AccuWeather',
-                      'rp5': 'RP5'}
+                      'rp5': 'RP5',
+                      'save_to_csv_accu': 'AccuWeather',
+                      'save_to_csv_rp5': 'RP5'}
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
@@ -148,12 +150,16 @@ def main(argv):
     for site in weather_sites:
         url = weather_sites[site]
         content = get_page_from_server(url)
-        if site == 'AccuWeather':
-            program_output(get_weather_accu(content))
+        if site == 'AccuWeather' and command == 'save_to_csv_accu':
             write_info_to_csv(get_weather_accu(content))
+            print('Information from the AccuWeather is recorded in the weather_data.csv')
+        elif site == 'AccuWeather':
+            program_output(get_weather_accu(content))
+        elif site == 'RP5' and command == 'save_to_csv_rp5':
+            write_info_to_csv(get_weather_rp5(content))
+            print('Information from the RP5 is recorded in the weather_data.csv')
         elif site == 'RP5':
             program_output(get_weather_rp5(content))
-            write_info_to_csv(get_weather_rp5(content))
 
 
 # start pages for getting information
