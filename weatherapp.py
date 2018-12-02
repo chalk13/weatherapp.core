@@ -113,8 +113,8 @@ def program_output(info: dict):
     def status_msg(msg: str, state: str) -> str:
         """Print weather information"""
 
-        result = "| " + msg + (' ' * (length_column_1 - len(msg))) + \
-                 " | " + state + (' ' * (length_column_2 - len(state))) + " |" + '\n'
+        result = f"| {msg} {' ' * (length_column_1 - len(msg))}" \
+                 f"| {state} {' ' * (length_column_2 - len(state))}|\n"
         return result
 
     print(border_line(length_column_1, length_column_2))
