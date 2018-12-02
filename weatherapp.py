@@ -30,7 +30,8 @@ def get_weather_accu(page):
     """Return information collected from AccuWeather"""
 
     weather_page = BeautifulSoup(page, 'html.parser')
-    current_day_selection = weather_page.find('li', {'class': ['day current first cl', 'night current first cl']})
+    current_day_selection = weather_page.find('li', {'class': ['day current first cl',
+                                                               'night current first cl']})
 
     weather_info = {}
     if current_day_selection:
