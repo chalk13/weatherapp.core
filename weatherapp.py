@@ -18,6 +18,7 @@ RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 DEFAULT_NAME = 'Kyiv'
 DEFAULT_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
 ACU_BROWSE_LOCATIONS = 'https://www.accuweather.com/en/browse-locations'
+RP5_BROWSE_LOCATIONS = 'http://rp5.ua/Weather_in_the_world'
 CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 
@@ -58,7 +59,7 @@ def get_configuration_file():
 
 
 def save_configuration(name, url):
-    """!!!"""
+    """Write the location to the configfile"""
 
     parser = configparser.ConfigParser()
     parser[CONFIG_LOCATION] = {'name': name, 'url': url}
@@ -83,7 +84,7 @@ def get_configuration():
 
 
 def configuration():
-    """!!!"""
+    """Set the location for which to display the weather"""
 
     locations = get_locations(ACU_BROWSE_LOCATIONS)
     while locations:
@@ -211,7 +212,8 @@ def main(argv):
 
     known_commands = {'accu': get_accu_weather_info,
                       'rp5': 'RP5',
-                      'config': configuration,
+                      'config_accu': configuration,
+                      'config_rp5': configuration,
                       'save_to_csv_accu': 'AccuWeather',
                       'save_to_csv_rp5': 'RP5'}
 
