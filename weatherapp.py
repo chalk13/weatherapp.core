@@ -4,11 +4,22 @@ Resources: AccuWeather, RP5
 Packages: urllib
 """
 import argparse
+import configparser
 import csv
 import html
 import sys
+from pathlib import Path
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
+
+# start pages for getting information
+ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
+RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
+DEFAULT_NAME = 'Kyiv'
+DEFAULT_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
+ACU_BROWSE_LOCATIONS = 'https://www.accuweather.com/en/browse-locations'
+CONFIG_LOCATION = 'Location'
+CONFIG_FILE = 'weatherapp.ini'
 
 
 def get_request_headers():
@@ -24,6 +35,65 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     page = urlopen(request).read()
 
     return page.decode('utf-8')
+
+
+def get_locations(locations_url):
+    """!!!"""
+
+    locations_page = get_page_from_server(locations_url)
+    soup = BeautifulSoup(locations_page, 'html.parser')
+
+    locations = []
+    for location in soup.find_all('li', class_='drilldown cl'):
+        url = location.find('a').attrs['href']
+        location = location.find('em').text
+        locations.append((location, url))
+    return locations
+
+
+def get_configuration_file():
+    """!!!"""
+
+    return Path.home() / CONFIG_FILE
+
+
+def save_configuration(name, url):
+    """!!!"""
+
+    parser = configparser.ConfigParser()
+    parser[CONFIG_LOCATION] = {'name': name, 'url': url}
+    with open(get_configuration_file(), 'w') as configfile:
+        parser.write(configfile)
+
+
+def get_configuration():
+    """!!!"""
+
+    name = DEFAULT_NAME
+    url = DEFAULT_URL
+
+    parser = configparser.ConfigParser()
+    parser.read(get_configuration_file())
+
+    if CONFIG_LOCATION in parser.sections():
+        config = parser[CONFIG_LOCATION]
+        name, url = config['name'], config['url']
+
+    return name, url
+
+
+def configurate():
+    """!!!"""
+
+    locations = get_locations(ACU_BROWSE_LOCATIONS)
+    while locations:
+        for index, location in enumerate(locations):
+            print(f'{index + 1}) {location[0]}')
+        selected_index = int(input('Please select location: '))
+        location = locations[selected_index - 1]
+        locations = get_locations(location[1])
+
+    save_configuration(*location)
 
 
 def get_weather_accu(page):
@@ -99,11 +169,13 @@ def write_info_to_csv(info: dict):
     output_file.close()
 
 
-def program_output(info: dict):
+def program_output(city, info: dict):
     """Print the application output in readable form"""
 
     length_column_1 = max(len(key) for key in info.keys())
     length_column_2 = max(len(value) for value in info.values())
+
+    print(f'{city.upper()}')
 
     def border_line(column_1: int, column_2: int) -> str:
         """Print a line for dividing information"""
@@ -126,11 +198,20 @@ def program_output(info: dict):
     print(border_line(length_column_1, length_column_2))
 
 
+def get_accu_weather_info():
+    """!!!"""
+
+    city_name, city_url = get_configuration()
+    content = get_page_from_server(city_url)
+    program_output(city_name, get_weather_accu(content))
+
+
 def main(argv):
     """Main entry point"""
 
-    known_commands = {'accu': 'AccuWeather',
+    known_commands = {'accu': get_accu_weather_info,
                       'rp5': 'RP5',
+                      'config': configurate,
                       'save_to_csv_accu': 'AccuWeather',
                       'save_to_csv_rp5': 'RP5'}
 
@@ -138,34 +219,24 @@ def main(argv):
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
     params = parser.parse_args(argv)
 
-    weather_sites = {'AccuWeather': ACU_URL, 'RP5': RP5_URL}
-
     if params.command:
         command = params.command[0]
         if command in known_commands:
-            weather_sites = {known_commands[command]: weather_sites[known_commands[command]]}
+            known_commands[command]()
         else:
             print('Unknown command provided.')
             sys.exit(1)
 
-    for site in weather_sites:
+    # Rewrite according to the new functionality
+    """for site in weather_sites:
         url = weather_sites[site]
         content = get_page_from_server(url)
         if site == 'AccuWeather' and command == 'save_to_csv_accu':
             write_info_to_csv(get_weather_accu(content))
             print('Information from the AccuWeather is recorded in the weather_data.csv')
-        elif site == 'AccuWeather':
-            program_output(get_weather_accu(content))
         elif site == 'RP5' and command == 'save_to_csv_rp5':
             write_info_to_csv(get_weather_rp5(content))
-            print('Information from the RP5 is recorded in the weather_data.csv')
-        elif site == 'RP5':
-            program_output(get_weather_rp5(content))
-
-
-# start pages for getting information
-ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
-RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
+            print('Information from the RP5 is recorded in the weather_data.csv')"""
 
 
 if __name__ == '__main__':
