@@ -37,8 +37,8 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     return page.decode('utf-8')
 
 
-def get_locations(locations_url):
-    """!!!"""
+def get_locations(locations_url: str) -> list:
+    """Return a list of locations and related urls"""
 
     locations_page = get_page_from_server(locations_url)
     soup = BeautifulSoup(locations_page, 'html.parser')
@@ -82,7 +82,7 @@ def get_configuration():
     return name, url
 
 
-def configurate():
+def configuration():
     """!!!"""
 
     locations = get_locations(ACU_BROWSE_LOCATIONS)
@@ -211,7 +211,7 @@ def main(argv):
 
     known_commands = {'accu': get_accu_weather_info,
                       'rp5': 'RP5',
-                      'config': configurate,
+                      'config': configuration,
                       'save_to_csv_accu': 'AccuWeather',
                       'save_to_csv_rp5': 'RP5'}
 
