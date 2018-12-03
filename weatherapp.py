@@ -200,18 +200,26 @@ def program_output(city, info: dict):
 
 
 def get_accu_weather_info():
-    """!!!"""
+    """Function to get accu weather info"""
 
     city_name, city_url = get_configuration()
     content = get_page_from_server(city_url)
     program_output(city_name, get_weather_accu(content))
 
 
+def get_rp5_weather_info():
+    """Function to get rp5 weather info"""
+
+    city_name, city_url = get_configuration()
+    content = get_page_from_server(city_url)
+    program_output(city_name, get_weather_rp5(content))
+
+
 def main(argv):
     """Main entry point"""
 
     known_commands = {'accu': get_accu_weather_info,
-                      'rp5': 'RP5',
+                      'rp5': get_rp5_weather_info,
                       'config_accu': configuration,
                       'config_rp5': configuration,
                       'save_to_csv_accu': 'AccuWeather',
