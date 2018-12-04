@@ -12,13 +12,11 @@ from pathlib import Path
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 
-# start pages for getting information
-ACU_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
-RP5_URL = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 DEFAULT_NAME = 'Kyiv'
-DEFAULT_URL = 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505'
-ACU_BROWSE_LOCATIONS = 'https://www.accuweather.com/en/browse-locations'
-RP5_BROWSE_LOCATIONS = 'http://rp5.ua/Weather_in_the_world'
+DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505',
+               'rp5': 'http://rp5.ua/Weather_in_Kiev,_Kyiv'}
+BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
+                    'rp5': 'http://rp5.ua/Weather_in_the_world'}
 CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 
@@ -38,7 +36,7 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     return page.decode('utf-8')
 
 
-def get_locations(locations_url: str) -> list:
+def get_locations_accu(locations_url: str) -> list:
     """Return a list of locations and related urls"""
 
     locations_page = get_page_from_server(locations_url)
@@ -50,6 +48,40 @@ def get_locations(locations_url: str) -> list:
         location = location.find('em').text
         locations.append((location, url))
     return locations
+
+
+def get_locations_rp5(locations_url: str) -> list:
+    """Return a list of locations and related urls"""
+
+    locations_page = get_page_from_server(locations_url)
+    soup = BeautifulSoup(locations_page, 'html.parser')
+
+    locations = []
+    try:
+        countries = soup.find_all('div', class_='country_map_links')
+        for location in countries:
+            url = location.find('b')
+            url = url.find('a').attrs['href']
+            url = f'http://rp5.ua{url}'
+            location = location.find('b').text[:-1]
+            locations.append((location, url))
+    except Exception:
+        return locations
+    try:
+        places = soup.find_all('div', class_='countryMap-cell')
+        for location in places:
+            url = location.find_all('h3')
+            url = url.find_all('a', class_='href20').attrs['href']
+            url = f'http://rp5.ua/{url}'
+            print(url)
+            location = location.find('b').text[:-1]
+            print(location)
+            locations.append((location, url))
+            print(locations)
+    except Exception:
+        return locations
+
+#    return locations
 
 
 def get_configuration_file():
@@ -67,11 +99,13 @@ def save_configuration(name, url):
         parser.write(configfile)
 
 
-def get_configuration():
+def get_configuration(site: str):
     """!!!"""
 
     name = DEFAULT_NAME
-    url = DEFAULT_URL
+    url = {'accu': ACU_URL, 'rp5': RP5_URL}
+    url = url[site]
+    print(url)
 
     parser = configparser.ConfigParser()
     parser.read(get_configuration_file())
@@ -86,13 +120,14 @@ def get_configuration():
 def configuration():
     """Set the location for which to display the weather"""
 
-    locations = get_locations(ACU_BROWSE_LOCATIONS)
+    locations = get_locations_accu(ACU_BROWSE_LOCATIONS)
     while locations:
         for index, location in enumerate(locations):
             print(f'{index + 1}) {location[0]}')
         selected_index = int(input('Please select location: '))
         location = locations[selected_index - 1]
-        locations = get_locations(location[1])
+        print(location)
+        locations = get_locations_accu(location[1])
 
     save_configuration(*location)
 
@@ -134,7 +169,9 @@ def get_weather_rp5(page):
 
     weather_page = BeautifulSoup(page, 'html.parser')
     current_day_temperature = weather_page.find('div', class_='ArchiveTemp')
+    print(current_day_temperature)
     current_day_weather_details = weather_page.find('div', id='forecastShort-content')
+    print(current_day_weather_details)
 
     weather_info = {}
     if current_day_temperature:
@@ -199,31 +236,23 @@ def program_output(city, info: dict):
     print(border_line(length_column_1, length_column_2))
 
 
-def get_accu_weather_info():
+def get_weather_info(command):
     """Function to get accu weather info"""
 
-    city_name, city_url = get_configuration()
+    city_name, city_url = get_configuration(command)
     content = get_page_from_server(city_url)
     program_output(city_name, get_weather_accu(content))
-
-
-def get_rp5_weather_info():
-    """Function to get rp5 weather info"""
-
-    city_name, city_url = get_configuration()
-    content = get_page_from_server(city_url)
-    program_output(city_name, get_weather_rp5(content))
 
 
 def main(argv):
     """Main entry point"""
 
-    known_commands = {'accu': get_accu_weather_info,
-                      'rp5': get_rp5_weather_info,
+    known_commands = {'accu': get_weather_info,
+                      'rp5': get_weather_info,
                       'config_accu': configuration,
                       'config_rp5': configuration,
-                      'save_to_csv_accu': 'AccuWeather',
-                      'save_to_csv_rp5': 'RP5'}
+                      'save_to_csv_accu': write_info_to_csv,
+                      'save_to_csv_rp5': write_info_to_csv}
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
@@ -232,7 +261,8 @@ def main(argv):
     if params.command:
         command = params.command[0]
         if command in known_commands:
-            known_commands[command]()
+            command = command.split('_')[-1]
+            known_commands[command](command)
         else:
             print('Unknown command provided.')
             sys.exit(1)
