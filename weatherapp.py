@@ -287,17 +287,6 @@ def main(argv):
             print('Unknown command provided.')
             sys.exit(1)
 
-    # Rewrite according to the new functionality
-    """for site in weather_sites:
-        url = weather_sites[site]
-        content = get_page_from_server(url)
-        if site == 'AccuWeather' and command == 'save_to_csv_accu':
-            write_info_to_csv(get_weather_accu(content))
-            print('Information from the AccuWeather is recorded in the weather_data.csv')
-        elif site == 'RP5' and command == 'save_to_csv_rp5':
-            write_info_to_csv(get_weather_rp5(content))
-            print('Information from the RP5 is recorded in the weather_data.csv')"""
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])
