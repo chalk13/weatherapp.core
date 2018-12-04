@@ -198,8 +198,23 @@ def get_weather_rp5(page):
     return weather_info
 
 
-def write_info_to_csv(info: dict):
+def get_weather_info_to_save(command):
+    if command == 'accu':
+        city_name, city_url = get_configuration(command)
+        content = get_page_from_server(city_url)
+        info = get_weather_accu(content)
+    elif command == 'rp5':
+        city_name, city_url = get_configuration(command)
+        content = get_page_from_server(city_url)
+        info = get_weather_rp5(content)
+
+    return info
+
+
+def write_info_to_csv(command):
     """Write data to a CSV file"""
+
+    info = get_weather_info_to_save(command)
 
     output_file = open('weather_data.csv', 'w', newline='')
     output_writer = csv.writer(output_file)
