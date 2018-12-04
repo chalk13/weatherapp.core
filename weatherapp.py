@@ -86,6 +86,7 @@ def get_locations_rp5(locations_url: str) -> list:
 
 def get_configuration_file():
     """!!!"""
+    print(Path.home() / CONFIG_FILE)
 
     return Path.home() / CONFIG_FILE
 
@@ -199,6 +200,8 @@ def get_weather_rp5(page):
 
 
 def get_weather_info_to_save(command):
+    """Return information from weather site to save"""
+
     if command == 'accu':
         city_name, city_url = get_configuration(command)
         content = get_page_from_server(city_url)
