@@ -81,8 +81,7 @@ def get_locations_rp5(locations_url: str) -> list:
 
 
 def get_configuration_file():
-    """!!!"""
-    print(Path.home() / CONFIG_FILE)
+    """Return path to the CONFIG_FILE"""
 
     return Path.home() / CONFIG_FILE
 
@@ -257,7 +256,7 @@ def program_output(city, info: dict):
 
 
 def get_weather_info(command):
-    """Function to get accu weather info"""
+    """Function to get weather info"""
 
     # TODO: replace repeated code by function
     city_name, city_url = get_configuration(command)
