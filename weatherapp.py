@@ -99,13 +99,11 @@ def save_configuration(name, url):
         parser.write(configfile)
 
 
-def get_configuration(site: str):
+def get_configuration(command):
     """!!!"""
 
     name = DEFAULT_NAME
-    url = {'accu': ACU_URL, 'rp5': RP5_URL}
-    url = url[site]
-    print(url)
+    url = DEFAULT_URL[command]
 
     parser = configparser.ConfigParser()
     parser.read(get_configuration_file())
@@ -117,10 +115,14 @@ def get_configuration(site: str):
     return name, url
 
 
-def configuration():
+def configuration(command):
     """Set the location for which to display the weather"""
 
-    locations = get_locations_accu(ACU_BROWSE_LOCATIONS)
+    if command == 'accu':
+        locations = get_locations_accu(BROWSE_LOCATIONS[command])
+    elif command == 'rp5':
+        locations = get_locations_rp5(BROWSE_LOCATIONS[command])
+
     while locations:
         for index, location in enumerate(locations):
             print(f'{index + 1}) {location[0]}')
@@ -241,7 +243,10 @@ def get_weather_info(command):
 
     city_name, city_url = get_configuration(command)
     content = get_page_from_server(city_url)
-    program_output(city_name, get_weather_accu(content))
+    if command == 'accu':
+        program_output(city_name, get_weather_accu(content))
+    elif command == 'rp5':
+        program_output(city_name, get_weather_rp5(content))
 
 
 def main(argv):
@@ -261,8 +266,8 @@ def main(argv):
     if params.command:
         command = params.command[0]
         if command in known_commands:
-            command = command.split('_')[-1]
-            known_commands[command](command)
+            command_site = command.split('_')[-1]
+            known_commands[command](command_site)
         else:
             print('Unknown command provided.')
             sys.exit(1)
