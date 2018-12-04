@@ -57,31 +57,25 @@ def get_locations_rp5(locations_url: str) -> list:
     soup = BeautifulSoup(locations_page, 'html.parser')
 
     locations = []
-    try:
-        countries = soup.find_all('div', class_='country_map_links')
-        for location in countries:
-            url = location.find('b')
-            url = url.find('a').attrs['href']
-            url = f'http://rp5.ua{url}'
-            location = location.find('b').text[:-1]
-            locations.append((location, url))
-    except Exception:
-        return locations
-    try:
-        places = soup.find_all('div', class_='countryMap-cell')
-        for location in places:
-            url = location.find_all('h3')
-            url = url.find_all('a', class_='href20').attrs['href']
-            url = f'http://rp5.ua/{url}'
-            print(url)
-            location = location.find('b').text[:-1]
-            print(location)
-            locations.append((location, url))
-            print(locations)
-    except Exception:
-        return locations
-
-#    return locations
+    countries = soup.find_all('div', class_='country_map_links')
+    print()
+    for location in countries:
+        url = location.find('b')
+        url = url.find('a').attrs['href']
+        url = f'http://rp5.ua{url}'
+        location = location.find('b').text[:-1]
+        locations.append((location, url))
+    return locations
+    '''places = soup.find_all('div', class_='countryMap-cell')
+    for location in places:
+        url = location.find_all('h3')
+        url = url.find_all('a', class_='href20').attrs['href']
+        url = f'http://rp5.ua/{url}'
+        print(url)
+        location = location.find('b').text[:-1]
+        print(location)
+        locations.append((location, url))
+        print(locations)'''
 
 
 def get_configuration_file():
@@ -101,7 +95,7 @@ def save_configuration(name, url):
 
 
 def get_configuration(command):
-    """!!!"""
+    """Return name of the city and related url"""
 
     name = DEFAULT_NAME
     url = DEFAULT_URL[command]
