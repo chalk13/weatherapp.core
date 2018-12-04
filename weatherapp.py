@@ -18,6 +18,8 @@ DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-fo
 BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world'}
 CONFIG_LOCATION = 'Location'
+
+# TODO: create separate .ini files for different sites
 CONFIG_FILE = 'weatherapp.ini'
 
 
@@ -197,10 +199,12 @@ def get_weather_info_to_save(command):
     """Return information from weather site to save"""
 
     if command == 'accu':
+        # TODO: replace repeated code by function
         city_name, city_url = get_configuration(command)
         content = get_page_from_server(city_url)
         info = get_weather_accu(content)
     elif command == 'rp5':
+        # TODO: replace repeated code by function
         city_name, city_url = get_configuration(command)
         content = get_page_from_server(city_url)
         info = get_weather_rp5(content)
@@ -249,10 +253,13 @@ def program_output(city, info: dict):
 
     print(border_line(length_column_1, length_column_2))
 
+# TODO: create a function to replace repeated code
+
 
 def get_weather_info(command):
     """Function to get accu weather info"""
 
+    # TODO: replace repeated code by function
     city_name, city_url = get_configuration(command)
     content = get_page_from_server(city_url)
     if command == 'accu':
