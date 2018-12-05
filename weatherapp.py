@@ -59,25 +59,23 @@ def get_locations_rp5(locations_url: str) -> list:
     soup = BeautifulSoup(locations_page, 'html.parser')
 
     locations = []
-    countries = soup.find_all('div', class_='country_map_links')
-    print()
-    for location in countries:
+    # TODO: try rewrite logic in an easier way
+    places = soup.find_all('div', class_='country_map_links')
+    if not places:
+        places = soup.find_all('a', class_='href20')
+        for place in places:
+            url = place.attrs['href']
+            url = f'http://rp5.ua/{url}'
+            location = place.text
+            locations.append((location, url))
+        return locations
+    for location in places:
         url = location.find('b')
         url = url.find('a').attrs['href']
         url = f'http://rp5.ua{url}'
         location = location.find('b').text[:-1]
         locations.append((location, url))
     return locations
-    '''places = soup.find_all('div', class_='countryMap-cell')
-    for location in places:
-        url = location.find_all('h3')
-        url = url.find_all('a', class_='href20').attrs['href']
-        url = f'http://rp5.ua/{url}'
-        print(url)
-        location = location.find('b').text[:-1]
-        print(location)
-        locations.append((location, url))
-        print(locations)'''
 
 
 def get_configuration_file():
@@ -124,8 +122,7 @@ def configuration(command):
             print(f'{index + 1}) {location[0]}')
         selected_index = int(input('Please select location: '))
         location = locations[selected_index - 1]
-        print(location)
-        locations = get_locations_accu(location[1])
+        locations = get_locations_rp5(location[1])
 
     save_configuration(*location)
 
@@ -167,9 +164,7 @@ def get_weather_rp5(page):
 
     weather_page = BeautifulSoup(page, 'html.parser')
     current_day_temperature = weather_page.find('div', class_='ArchiveTemp')
-    print(current_day_temperature)
     current_day_weather_details = weather_page.find('div', id='forecastShort-content')
-    print(current_day_weather_details)
 
     weather_info = {}
     if current_day_temperature:
@@ -201,14 +196,12 @@ def get_weather_info_to_save(command):
         # TODO: replace repeated code by function
         city_name, city_url = get_configuration(command)
         content = get_page_from_server(city_url)
-        info = get_weather_accu(content)
-    elif command == 'rp5':
+        return get_weather_accu(content)
+    if command == 'rp5':
         # TODO: replace repeated code by function
         city_name, city_url = get_configuration(command)
         content = get_page_from_server(city_url)
-        info = get_weather_rp5(content)
-
-    return info
+        return get_weather_rp5(content)
 
 
 def write_info_to_csv(command):
@@ -263,7 +256,7 @@ def get_weather_info(command):
     content = get_page_from_server(city_url)
     if command == 'accu':
         program_output(city_name, get_weather_accu(content))
-    elif command == 'rp5':
+    if command == 'rp5':
         program_output(city_name, get_weather_rp5(content))
 
 
