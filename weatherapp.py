@@ -63,19 +63,28 @@ def get_locations_rp5(locations_url: str) -> list:
     places = soup.find_all('div', class_='country_map_links')
     if not places:
         places = soup.find_all('a', class_='href20')
+        if not places:
+            places = soup.find_all('div', class_='city_link')
+            for place in places:
+                url = place.find('a').attrs['href']
+                url = f'http://rp5.ua/{url}'
+                location = place.text
+                locations.append((location, url))
+                return locations
         for place in places:
             url = place.attrs['href']
             url = f'http://rp5.ua/{url}'
             location = place.text
             locations.append((location, url))
         return locations
-    for location in places:
-        url = location.find('b')
-        url = url.find('a').attrs['href']
-        url = f'http://rp5.ua{url}'
-        location = location.find('b').text[:-1]
-        locations.append((location, url))
-    return locations
+    else:
+        for location in places:
+            url = location.find('b')
+            url = url.find('a').attrs['href']
+            url = f'http://rp5.ua{url}'
+            location = location.find('b').text[:-1]
+            locations.append((location, url))
+        return locations
 
 
 def get_configuration_file():
@@ -122,7 +131,10 @@ def configuration(command):
             print(f'{index + 1}) {location[0]}')
         selected_index = int(input('Please select location: '))
         location = locations[selected_index - 1]
-        locations = get_locations_rp5(location[1])
+        if command == 'accu':
+            locations = get_locations_accu(location[1])
+        elif command == 'rp5':
+            locations = get_locations_rp5(location[1])
 
     save_configuration(*location)
 
