@@ -204,10 +204,12 @@ def get_weather_info_to_save(command: str) -> dict:
 
     if command == 'accu':
         city_name, content = get_city_name_page_content(command)
-        return get_weather_accu(content)
+        weather_info = get_weather_accu(content)
     if command == 'rp5':
         city_name, content = get_city_name_page_content(command)
-        return get_weather_rp5(content)
+        weather_info = get_weather_rp5(content)
+
+    return weather_info
 
 
 def write_info_to_csv(command: str):
