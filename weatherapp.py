@@ -23,7 +23,7 @@ CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 
 
-def get_request_headers():
+def get_request_headers() -> dict:
     """Return information for headers"""
 
     return {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
@@ -93,7 +93,7 @@ def get_configuration_file():
     return Path.home() / CONFIG_FILE
 
 
-def save_configuration(name, url):
+def save_configuration(name: str, url: str):
     """Write the location to the configfile"""
 
     parser = configparser.ConfigParser()
@@ -102,7 +102,7 @@ def save_configuration(name, url):
         parser.write(configfile)
 
 
-def get_configuration(command):
+def get_configuration(command: str) -> tuple:
     """Return name of the city and related url"""
 
     name = DEFAULT_NAME
@@ -118,7 +118,7 @@ def get_configuration(command):
     return name, url
 
 
-def configuration(command):
+def configuration(command: str):
     """Set the location for which to display the weather"""
 
     if command == 'accu':
@@ -139,7 +139,7 @@ def configuration(command):
     save_configuration(*location)
 
 
-def get_weather_accu(page):
+def get_weather_accu(page: str) -> dict:
     """Return information collected from AccuWeather"""
 
     weather_page = BeautifulSoup(page, 'html.parser')
@@ -171,7 +171,7 @@ def get_weather_accu(page):
     return weather_info
 
 
-def get_weather_rp5(page):
+def get_weather_rp5(page: str) -> dict:
     """Return information collected from RP5"""
 
     weather_page = BeautifulSoup(page, 'html.parser')
@@ -201,7 +201,7 @@ def get_weather_rp5(page):
     return weather_info
 
 
-def get_weather_info_to_save(command):
+def get_weather_info_to_save(command: str) -> dict:
     """Return information from weather site to save"""
 
     if command == 'accu':
@@ -216,7 +216,7 @@ def get_weather_info_to_save(command):
         return get_weather_rp5(content)
 
 
-def write_info_to_csv(command):
+def write_info_to_csv(command: str):
     """Write data to a CSV file"""
 
     info = get_weather_info_to_save(command)
@@ -229,7 +229,7 @@ def write_info_to_csv(command):
     output_file.close()
 
 
-def program_output(city, info: dict):
+def program_output(city: str, info: dict):
     """Print the application output in readable form"""
 
     length_column_1 = max(len(key) for key in info.keys())
@@ -260,7 +260,7 @@ def program_output(city, info: dict):
 # TODO: create a function to replace repeated code
 
 
-def get_weather_info(command):
+def get_weather_info(command: str):
     """Function to get weather info"""
 
     # TODO: replace repeated code by function
