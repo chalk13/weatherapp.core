@@ -205,14 +205,10 @@ def get_weather_info_to_save(command: str) -> dict:
     """Return information from weather site to save"""
 
     if command == 'accu':
-        # TODO: replace repeated code by function
-        city_name, city_url = get_configuration(command)
-        content = get_page_from_server(city_url)
+        city_name, content = get_city_name_page_content(command)
         return get_weather_accu(content)
     if command == 'rp5':
-        # TODO: replace repeated code by function
-        city_name, city_url = get_configuration(command)
-        content = get_page_from_server(city_url)
+        city_name, content = get_city_name_page_content(command)
         return get_weather_rp5(content)
 
 
@@ -257,15 +253,20 @@ def program_output(city: str, info: dict):
 
     print(border_line(length_column_1, length_column_2))
 
-# TODO: create a function to replace repeated code
+
+def get_city_name_page_content(command: str) -> tuple:
+    """Return name of the city and page content"""
+
+    city_name, city_url = get_configuration(command)
+    content = get_page_from_server(city_url)
+    return city_name, content
 
 
 def get_weather_info(command: str):
     """Function to get weather info"""
 
-    # TODO: replace repeated code by function
-    city_name, city_url = get_configuration(command)
-    content = get_page_from_server(city_url)
+    city_name, content = get_city_name_page_content(command)
+
     if command == 'accu':
         program_output(city_name, get_weather_accu(content))
     if command == 'rp5':
