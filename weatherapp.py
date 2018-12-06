@@ -18,8 +18,6 @@ DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-fo
 BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world'}
 CONFIG_LOCATION = 'Location'
-
-# TODO: create separate .ini files for different sites
 CONFIG_FILE = 'weatherapp.ini'
 
 
@@ -268,9 +266,17 @@ def get_weather_info(command: str):
     city_name, content = get_city_name_page_content(command)
 
     if command == 'accu':
-        program_output(city_name, get_weather_accu(content))
+        try:
+            program_output(city_name, get_weather_accu(content))
+        except ValueError:
+            print("Please, first change the configuration file for AccuWeather.\n"
+                  "Use the following command: config_accu")
     if command == 'rp5':
-        program_output(city_name, get_weather_rp5(content))
+        try:
+            program_output(city_name, get_weather_rp5(content))
+        except ValueError:
+            print("Please, first change the configuration file for RP5.\n"
+                  "Use the following command: config_rp5")
 
 
 def main(argv):
