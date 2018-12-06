@@ -269,12 +269,14 @@ def get_weather_info(command: str):
 
     if command == 'accu':
         try:
+            print(f'Information from {command.upper()} weather site.')
             program_output(city_name, get_weather_accu(content))
         except ValueError:
             print("Please, first change the configuration file for AccuWeather.\n"
                   "Use the following command: config_accu")
     if command == 'rp5':
         try:
+            print(f'Information from {command.upper()} weather site.')
             program_output(city_name, get_weather_rp5(content))
         except ValueError:
             print("Please, first change the configuration file for RP5.\n"
