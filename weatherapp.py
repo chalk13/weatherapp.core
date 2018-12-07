@@ -9,6 +9,7 @@ import csv
 import hashlib
 import html
 import sys
+import time
 from pathlib import Path
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
@@ -21,6 +22,7 @@ BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
 CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 CACHE_DIR = '.weatherappcache'
+CACHE_TIME = 900
 
 
 def get_request_headers() -> dict:
@@ -33,6 +35,12 @@ def get_cache_directory():
     """Return path to the cache directory"""
 
     return Path.home() / CACHE_DIR
+
+
+def cache_is_valid(path):
+    """Check if current cache file is valid"""
+
+    return (time.time() - path.stat().st_mtime) < CACHE_TIME
 
 
 def get_url_hash(url: str) -> str:
@@ -60,7 +68,7 @@ def get_cache(url: str):
     cache_dir = get_cache_directory()
     if cache_dir.exists():
         cache_path = cache_dir / url_hash
-        if cache_path.exists():
+        if cache_path.exists() and cache_is_valid(cache_path):
             with cache_path.open('rb') as cache_file:
                 cache = cache_file.read()
 
