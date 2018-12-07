@@ -46,12 +46,31 @@ def save_cache(url: str, page_source: str):
         cache_file.write(page_source)
 
 
+def get_cache(url: str):
+    """Return cache data if any exists"""
+
+    cache = b''
+    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    cache_dir = get_cache_directory()
+    if cache_dir.exists():
+        cache_path = cache_dir / url_hash
+        if cache_path.exists():
+            with cache_path.open('rb') as cache_file:
+                cache = cache_file.read()
+
+    return cache
+
+
 def get_page_from_server(page_url: str) -> str:  # getting page from server
     """Return information about the page in the string format"""
 
-    request = Request(page_url, headers=get_request_headers())
-    page = urlopen(request).read()
-    save_cache(page_url, page)
+    cache = get_cache(page_url)
+    if cache:
+        page = cache
+    else:
+        request = Request(page_url, headers=get_request_headers())
+        page = urlopen(request).read()
+        save_cache(page_url, page)
 
     return page.decode('utf-8')
 
