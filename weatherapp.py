@@ -35,10 +35,16 @@ def get_cache_directory():
     return Path.home() / CACHE_DIR
 
 
+def get_url_hash(url: str) -> str:
+    """Generates hash for given url"""
+
+    return hashlib.md5(url.encode('utf-8')).hexdigest()
+
+
 def save_cache(url: str, page_source: str):
     """Save page source data to file"""
 
-    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    url_hash = get_url_hash(url)
     cache_dir = get_cache_directory()
     if not cache_dir.exists():
         cache_dir.mkdir(parents=True)
@@ -50,7 +56,7 @@ def get_cache(url: str):
     """Return cache data if any exists"""
 
     cache = b''
-    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    url_hash = get_url_hash(url)
     cache_dir = get_cache_directory()
     if cache_dir.exists():
         cache_path = cache_dir / url_hash
