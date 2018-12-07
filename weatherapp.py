@@ -37,7 +37,7 @@ def get_cache_directory():
     return Path.home() / CACHE_DIR
 
 
-def cache_is_valid(path):
+def cache_is_valid(path) -> bool:
     """Check if current cache file is valid"""
 
     return (time.time() - path.stat().st_mtime) < CACHE_TIME
