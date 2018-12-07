@@ -6,6 +6,7 @@ Packages: urllib
 import argparse
 import configparser
 import csv
+import hashlib
 import html
 import sys
 from pathlib import Path
@@ -19,6 +20,7 @@ BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world'}
 CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
+CACHE_DIR = '.weatherappcache'
 
 
 def get_request_headers() -> dict:
@@ -27,11 +29,29 @@ def get_request_headers() -> dict:
     return {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
 
 
+def get_cache_directory():
+    """Return path to the cache directory"""
+
+    return Path.home() / CACHE_DIR
+
+
+def save_cache(url: str, page_source: str):
+    """Save page source data to file"""
+
+    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    cache_dir = get_cache_directory()
+    if not cache_dir.exists():
+        cache_dir.mkdir(parents=True)
+    with (cache_dir/url_hash).open('wb') as cache_file:
+        cache_file.write(page_source)
+
+
 def get_page_from_server(page_url: str) -> str:  # getting page from server
     """Return information about the page in the string format"""
 
     request = Request(page_url, headers=get_request_headers())
     page = urlopen(request).read()
+    save_cache(page_url, page)
 
     return page.decode('utf-8')
 
@@ -269,14 +289,14 @@ def get_weather_info(command: str):
 
     if command == 'accu':
         try:
-            print(f'Information from {command.upper()} weather site.')
+            print(f'Information from {command.upper()} weather site:')
             program_output(city_name, get_weather_accu(content))
         except ValueError:
             print("Please, first change the configuration file for AccuWeather.\n"
                   "Use the following command: config_accu")
     if command == 'rp5':
         try:
-            print(f'Information from {command.upper()} weather site.')
+            print(f'Information from {command.upper()} weather site:')
             program_output(city_name, get_weather_rp5(content))
         except ValueError:
             print("Please, first change the configuration file for RP5.\n"
