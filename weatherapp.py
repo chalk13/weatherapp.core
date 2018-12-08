@@ -369,16 +369,14 @@ def main(argv):
         if len(params.command) == 2:
             command = params.command[0]
             weather_site = params.command[1]
-        if command == 'config':
-            known_commands[command](weather_site,
-                                    reset_defaults=params.reset_defaults)
+        if command == 'clear-cache':
+            known_commands[command]()
         elif command == 'save_to_csv':
             known_commands[command](weather_site)
-        elif command == 'clear-cache':
-            known_commands[command]()
         elif command in known_commands:
             known_commands[command](weather_site,
-                                    refresh=params.refresh)
+                                    refresh=params.refresh,
+                                    reset_defaults=params.reset_defaults)
         else:
             print('Unknown command provided.')
             sys.exit(1)
