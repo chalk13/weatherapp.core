@@ -142,7 +142,7 @@ def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
             url = f'http://rp5.ua{url}'
             location = location.find('b').text[:-1]
             locations.append((location, url))
-            
+
     return locations
 
 
