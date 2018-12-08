@@ -276,7 +276,7 @@ def get_weather_info_to_save(command: str) -> dict:
     return weather_info
 
 
-def write_info_to_csv(command: str):
+def write_info_to_csv(command: str, refresh: bool = False):
     """Write data to a CSV file"""
 
     info = get_weather_info_to_save(command)
@@ -354,8 +354,7 @@ def main(argv):
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
                       'config': configuration,
-                      'save_to_csv_accu': write_info_to_csv,
-                      'save_to_csv_rp5': write_info_to_csv,
+                      'save_to_csv': write_info_to_csv,
                       'clear-cache': clear_app_cache}
 
     parser = argparse.ArgumentParser(description='Application information')
@@ -364,9 +363,8 @@ def main(argv):
     params = parser.parse_args(argv)
 
     if params.command:
-        if len(params.command) == 1:
-            command = params.command[0]
-            weather_site = params.command[0]
+        command = params.command[0]
+        weather_site = params.command[0]
         if len(params.command) == 2:
             command = params.command[0]
             weather_site = params.command[1]
