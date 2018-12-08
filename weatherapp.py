@@ -8,6 +8,7 @@ import configparser
 import csv
 import hashlib
 import html
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -73,6 +74,13 @@ def get_cache(url: str):
                 cache = cache_file.read()
 
     return cache
+
+
+def clear_app_cache(command, refresh=False):
+    """Delete directory with cache"""
+
+    cache_dir = get_cache_directory()
+    shutil.rmtree(cache_dir)
 
 
 def get_page_from_server(page_url: str, refresh: bool = False) -> str:
@@ -318,7 +326,7 @@ def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
     return city_name, content
 
 
-def get_weather_info(command: str, refresh: bool=False):
+def get_weather_info(command: str, refresh: bool = False):
     """Function to get weather info"""
 
     city_name, content = get_city_name_page_content(command,
@@ -348,9 +356,10 @@ def main(argv):
                       'config_accu': configuration,
                       'config_rp5': configuration,
                       'save_to_csv_accu': write_info_to_csv,
-                      'save_to_csv_rp5': write_info_to_csv}
+                      'save_to_csv_rp5': write_info_to_csv,
+                      'clear-cache': clear_app_cache}
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Application arguments')
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
     parser.add_argument('--refresh', help='Update caches', action='store_true')
     params = parser.parse_args(argv)
