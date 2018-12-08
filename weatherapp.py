@@ -76,7 +76,7 @@ def get_cache(url: str):
     return cache
 
 
-def clear_app_cache(command, refresh=False):
+def clear_app_cache():
     """Delete directory with cache"""
 
     cache_dir = get_cache_directory()
@@ -276,7 +276,7 @@ def get_weather_info_to_save(command: str) -> dict:
     return weather_info
 
 
-def write_info_to_csv(command: str, refresh: bool = False):
+def write_info_to_csv(command: str):
     """Write data to a CSV file"""
 
     info = get_weather_info_to_save(command)
@@ -360,6 +360,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description='Application information')
     parser.add_argument('command', help='Service name', nargs='*')
     parser.add_argument('--refresh', help='Update caches', action='store_true')
+    parser.add_argument('--reset-default', help='Erase settings', action='store_true')
     params = parser.parse_args(argv)
 
     if params.command:
@@ -368,8 +369,16 @@ def main(argv):
         if len(params.command) == 2:
             command = params.command[0]
             weather_site = params.command[1]
-        if command in known_commands:
-            known_commands[command](weather_site, refresh=params.refresh)
+        if command == 'config':
+            known_commands[command](weather_site,
+                                    reset_defaults=params.reset_defaults)
+        elif command == 'save_to_csv':
+            known_commands[command](weather_site)
+        elif command == 'clear-cache':
+            known_commands[command]()
+        elif command in known_commands:
+            known_commands[command](weather_site,
+                                    refresh=params.refresh)
         else:
             print('Unknown command provided.')
             sys.exit(1)
