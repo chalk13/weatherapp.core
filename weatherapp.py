@@ -353,22 +353,25 @@ def main(argv):
 
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
-                      'config_accu': configuration,
-                      'config_rp5': configuration,
+                      'config': configuration,
                       'save_to_csv_accu': write_info_to_csv,
                       'save_to_csv_rp5': write_info_to_csv,
                       'clear-cache': clear_app_cache}
 
-    parser = argparse.ArgumentParser(description='Application arguments')
-    parser.add_argument('command', help='Command to choose weather website', nargs=1)
+    parser = argparse.ArgumentParser(description='Application information')
+    parser.add_argument('command', help='Service name', nargs='*')
     parser.add_argument('--refresh', help='Update caches', action='store_true')
     params = parser.parse_args(argv)
 
     if params.command:
-        command = params.command[0]
+        if len(params.command) == 1:
+            command = params.command[0]
+            weather_site = params.command[0]
+        if len(params.command) == 2:
+            command = params.command[0]
+            weather_site = params.command[1]
         if command in known_commands:
-            command_site = command.split('_')[-1]
-            known_commands[command](command_site, refresh=params.refresh)
+            known_commands[command](weather_site, refresh=params.refresh)
         else:
             print('Unknown command provided.')
             sys.exit(1)
