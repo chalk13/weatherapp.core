@@ -75,11 +75,11 @@ def get_cache(url: str):
     return cache
 
 
-def get_page_from_server(page_url: str) -> str:  # getting page from server
+def get_page_from_server(page_url: str, refresh: bool = False) -> str:
     """Return information about the page in the string format"""
 
     cache = get_cache(page_url)
-    if cache:
+    if cache and not refresh:
         page = cache
     else:
         request = Request(page_url, headers=get_request_headers())
@@ -89,10 +89,10 @@ def get_page_from_server(page_url: str) -> str:  # getting page from server
     return page.decode('utf-8')
 
 
-def get_locations_accu(locations_url: str) -> list:
+def get_locations_accu(locations_url: str, refresh: bool = False) -> list:
     """Return a list of locations and related urls"""
 
-    locations_page = get_page_from_server(locations_url)
+    locations_page = get_page_from_server(locations_url, refresh=refresh)
     soup = BeautifulSoup(locations_page, 'html.parser')
 
     locations = []
@@ -103,10 +103,10 @@ def get_locations_accu(locations_url: str) -> list:
     return locations
 
 
-def get_locations_rp5(locations_url: str) -> list:
+def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
     """Return a list of locations and related urls"""
 
-    locations_page = get_page_from_server(locations_url)
+    locations_page = get_page_from_server(locations_url, refresh=refresh)
     soup = BeautifulSoup(locations_page, 'html.parser')
 
     locations = []
@@ -169,13 +169,15 @@ def get_configuration(command: str) -> tuple:
     return name, url
 
 
-def configuration(command: str):
+def configuration(command: str, refresh: bool = False):
     """Set the location for which to display the weather"""
 
     if command == 'accu':
-        locations = get_locations_accu(BROWSE_LOCATIONS[command])
+        locations = get_locations_accu(BROWSE_LOCATIONS[command],
+                                       refresh=refresh)
     elif command == 'rp5':
-        locations = get_locations_rp5(BROWSE_LOCATIONS[command])
+        locations = get_locations_rp5(BROWSE_LOCATIONS[command],
+                                      refresh=refresh)
 
     while locations:
         for index, location in enumerate(locations):
@@ -183,14 +185,14 @@ def configuration(command: str):
         selected_index = int(input('Please select location: '))
         location = locations[selected_index - 1]
         if command == 'accu':
-            locations = get_locations_accu(location[1])
+            locations = get_locations_accu(location[1], refresh=refresh)
         elif command == 'rp5':
-            locations = get_locations_rp5(location[1])
+            locations = get_locations_rp5(location[1], refresh=refresh)
 
     save_configuration(*location)
 
 
-def get_weather_accu(page: str) -> dict:
+def get_weather_accu(page: str, refresh: bool = False) -> dict:
     """Return information collected from AccuWeather"""
 
     weather_page = BeautifulSoup(page, 'html.parser')
@@ -201,7 +203,8 @@ def get_weather_accu(page: str) -> dict:
     if current_day_selection:
         current_day_url = current_day_selection.find('a').attrs['href']
         if current_day_url:
-            current_day_page = get_page_from_server(current_day_url)
+            current_day_page = get_page_from_server(current_day_url,
+                                                    refresh=refresh)
             if current_day_page:
                 current_day = BeautifulSoup(current_day_page, 'html.parser')
                 weather_details = current_day.find('div', attrs={'id': 'detail-now'})
@@ -307,18 +310,19 @@ def program_output(city: str, info: dict):
     print(border_line(length_column_1, length_column_2))
 
 
-def get_city_name_page_content(command: str) -> tuple:
+def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
     """Return name of the city and page content"""
 
     city_name, city_url = get_configuration(command)
-    content = get_page_from_server(city_url)
+    content = get_page_from_server(city_url, refresh=refresh)
     return city_name, content
 
 
-def get_weather_info(command: str):
+def get_weather_info(command: str, refresh: bool=False):
     """Function to get weather info"""
 
-    city_name, content = get_city_name_page_content(command)
+    city_name, content = get_city_name_page_content(command,
+                                                    refresh=refresh)
 
     if command == 'accu':
         try:
@@ -348,13 +352,14 @@ def main(argv):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('command', help='Command to choose weather website', nargs=1)
+    parser.add_argument('--refresh', help='Update caches', action='store_true')
     params = parser.parse_args(argv)
 
     if params.command:
         command = params.command[0]
         if command in known_commands:
             command_site = command.split('_')[-1]
-            known_commands[command](command_site)
+            known_commands[command](command_site, refresh=params.refresh)
         else:
             print('Unknown command provided.')
             sys.exit(1)
