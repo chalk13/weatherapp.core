@@ -20,7 +20,6 @@ DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-fo
                'rp5': 'http://rp5.ua/Weather_in_Kiev,_Kyiv'}
 BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world'}
-CONFIG_LOCATION = 'Location'
 CONFIG_FILE = 'weatherapp.ini'
 CACHE_DIR = '.weatherappcache'
 CACHE_TIME = 900
@@ -152,12 +151,12 @@ def get_configuration_file():
     return Path.home() / CONFIG_FILE
 
 
-def save_configuration(name: str, url: str):
+def save_configuration(command, name: str, url: str):
     """Write the location to the configfile"""
 
     parser = configparser.ConfigParser()
-    parser[CONFIG_LOCATION] = {'name': name, 'url': url}
-    with open(get_configuration_file(), 'w') as configfile:
+    parser[command] = {'name': name, 'url': url}
+    with open(get_configuration_file(), 'r+') as configfile:
         parser.write(configfile)
 
 
@@ -170,8 +169,8 @@ def get_configuration(command: str) -> tuple:
     parser = configparser.ConfigParser()
     parser.read(get_configuration_file())
 
-    if CONFIG_LOCATION in parser.sections():
-        config = parser[CONFIG_LOCATION]
+    if command in parser.sections():
+        config = parser[command]
         name, url = config['name'], config['url']
 
     return name, url
@@ -197,7 +196,7 @@ def configuration(command: str, refresh: bool = False):
         elif command == 'rp5':
             locations = get_locations_rp5(location[1], refresh=refresh)
 
-    save_configuration(*location)
+    save_configuration(command, *location)
 
 
 def get_weather_accu(page: str, refresh: bool = False) -> dict:
