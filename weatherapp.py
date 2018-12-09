@@ -24,6 +24,8 @@ CONFIG_FILE = 'weatherapp.ini'
 CACHE_DIR = '.weatherappcache'
 CACHE_TIME = 900
 
+# TODO: weatherapp.ini must contain information from both sites
+
 
 def get_request_headers() -> dict:
     """Return information for headers"""
