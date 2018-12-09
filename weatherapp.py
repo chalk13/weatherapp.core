@@ -375,8 +375,7 @@ def main(argv):
             known_commands[command](weather_site)
         elif command in known_commands:
             known_commands[command](weather_site,
-                                    refresh=params.refresh,
-                                    reset_defaults=params.reset_defaults)
+                                    refresh=params.refresh)
         else:
             print('Unknown command provided.')
             sys.exit(1)
