@@ -156,7 +156,7 @@ def save_configuration(command, name: str, url: str):
 
     parser = configparser.ConfigParser()
     parser[command] = {'name': name, 'url': url}
-    with open(get_configuration_file(), 'r+') as configfile:
+    with open(get_configuration_file(), 'w') as configfile:
         parser.write(configfile)
 
 
@@ -332,19 +332,11 @@ def get_weather_info(command: str, refresh: bool = False):
                                                     refresh=refresh)
 
     if command == 'accu':
-        try:
-            print(f'Information from {command.upper()} weather site:')
-            program_output(city_name, get_weather_accu(content))
-        except ValueError:
-            print("Please, first change the configuration file for AccuWeather.\n"
-                  "Use the following command: config_accu")
+        print(f'Information from {command.upper()} weather site:')
+        program_output(city_name, get_weather_accu(content))
     if command == 'rp5':
-        try:
-            print(f'Information from {command.upper()} weather site:')
-            program_output(city_name, get_weather_rp5(content))
-        except ValueError:
-            print("Please, first change the configuration file for RP5.\n"
-                  "Use the following command: config_rp5")
+        print(f'Information from {command.upper()} weather site:')
+        program_output(city_name, get_weather_rp5(content))
 
 
 def main(argv):
