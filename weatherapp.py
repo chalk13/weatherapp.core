@@ -151,7 +151,7 @@ def get_configuration_file():
     return Path.home() / CONFIG_FILE
 
 
-def save_configuration(command, name: str, url: str):
+def save_configuration(command: str, name: str, url: str):
     """Write the location to the configfile"""
 
     parser = configparser.ConfigParser()
