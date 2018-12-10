@@ -25,6 +25,12 @@ CACHE_DIR = '.weatherappcache'
 CACHE_TIME = 900
 
 # TODO: weatherapp.ini must contain information from both sites
+# TODO: add option for the config commands to erase specific site settings
+# --reset-defaults
+# TODO: add option which takes the num of sec on which to cache the site
+# --cache-for
+# TODO: on the start of the program delete the outdated cache
+# TODO: add a command that shows the weather for tomorrow
 
 
 def get_request_headers() -> dict:
@@ -353,7 +359,6 @@ def main(argv):
     parser = argparse.ArgumentParser(description='Application information')
     parser.add_argument('command', help='Service name', nargs='*')
     parser.add_argument('--refresh', help='Update caches', action='store_true')
-    parser.add_argument('--reset-default', help='Erase settings', action='store_true')
     params = parser.parse_args(argv)
 
     if params.command:
