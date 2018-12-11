@@ -8,6 +8,7 @@ import configparser
 import csv
 import hashlib
 import html
+import os
 import shutil
 import sys
 import time
@@ -23,13 +24,13 @@ BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
 CONFIG_FILE = 'weatherapp.ini'
 CACHE_DIR = '.weatherappcache'
 CACHE_TIME = 900
+DAY_IN_SECONDS = 86400
 
 # TODO: weatherapp.ini must contain information from both sites
 # TODO: add option for the config commands to erase specific site settings
 # --reset-defaults
 # TODO: add option which takes the num of sec on which to cache the site
 # --cache-for
-# TODO: on the start of the program delete the outdated cache
 # TODO: add a command that shows the weather for tomorrow
 
 
@@ -88,6 +89,19 @@ def clear_app_cache():
 
     cache_dir = get_cache_directory()
     shutil.rmtree(cache_dir)
+
+
+def delete_invalid_cache():
+    """Delete all invalid (old) cache"""
+
+    cache_dir = get_cache_directory()
+    if cache_dir.exists():
+        path = Path(cache_dir)
+        dirs = os.listdir(path)
+        for file in dirs:
+            life_time = time.time() - (path/file).stat().st_mtime
+            if life_time > DAY_IN_SECONDS:
+                os.remove(path/file)
 
 
 def get_page_from_server(page_url: str, refresh: bool = False) -> str:
@@ -349,6 +363,8 @@ def get_weather_info(command: str, refresh: bool = False):
 
 def main(argv):
     """Main entry point"""
+
+    delete_invalid_cache()
 
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
