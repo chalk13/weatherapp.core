@@ -148,7 +148,7 @@ def program_output(city: str, info: dict):
 def get_weather_info(command: str, refresh: bool = False):
     """Function to get weather info"""
 
-    accu = AccuWeatherProvider()
+    accu = AccuWeatherProvider(command)
 
     if command == 'accu':
         print(f'Information from {command.upper()} weather site:')
