@@ -1,5 +1,7 @@
 """Constants for the weather application project."""
 
+ACCU_PROVIDER_NAME = 'accu'
+RP5_PROVIDER_NAME = 'rp5'
 DEFAULT_NAME = 'Kyiv'
 DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505',
                'rp5': 'http://rp5.ua/Weather_in_Kiev,_Kyiv'}
