@@ -52,3 +52,8 @@ class AccuWeatherProvider:
             name, url = configuration['name'], configuration['url']
 
         return name, url
+
+    def get_request_headers(self) -> dict:
+        """Return information for headers"""
+
+        return {'User-Agent': config.FAKE_MOZILLA_AGENT}
