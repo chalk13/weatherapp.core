@@ -5,8 +5,9 @@ Providers: accuweather.com, rp5.ua
 """
 
 import configparser
-import config
 from pathlib import Path
+
+import config
 
 
 class AccuWeatherProvider:
@@ -31,8 +32,8 @@ class AccuWeatherProvider:
         parser.read(self.get_configuration_file())
 
         if command in parser.sections():
-            config = parser[command]
-            name, url = config['name'], config['url']
+            configuration = parser[command]
+            name, url = configuration['name'], configuration['url']
 
         return name, url
 
