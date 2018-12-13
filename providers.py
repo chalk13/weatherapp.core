@@ -22,6 +22,22 @@ class AccuWeatherProvider:
         self.location = location
         self.url = url
 
+    def get_configuration_file(self):
+        """Path to the CONFIG_FILE.
+
+        Returns path to configuration file in your home directory.
+        """
+
+        return Path.home() / config.CONFIG_FILE
+
+    def save_configuration(self, command: str, name: str, url: str):
+        """Write the location to the configfile"""
+
+        parser = configparser.ConfigParser()
+        parser[command] = {'name': name, 'url': url}
+        with open(self.get_configuration_file(), 'w') as configfile:
+            parser.write(configfile)
+
     def get_configuration(self, command: str) -> tuple:
         """Returns name of the city and related url"""
 
@@ -36,11 +52,3 @@ class AccuWeatherProvider:
             name, url = configuration['name'], configuration['url']
 
         return name, url
-
-    def get_configuration_file(self):
-        """Path to the CONFIG_FILE.
-
-        Returns path to configuration file in your home directory.
-        """
-
-        return Path.home() / config.CONFIG_FILE
