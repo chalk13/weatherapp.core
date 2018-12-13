@@ -5,7 +5,13 @@ Providers: accuweather.com, rp5.ua
 """
 
 import configparser
+import hashlib
+import os
+import shutil
+import time
 from pathlib import Path
+
+from bs4 import BeautifulSoup
 
 import config
 
@@ -57,3 +63,60 @@ class AccuWeatherProvider:
         """Return information for headers"""
 
         return {'User-Agent': config.FAKE_MOZILLA_AGENT}
+
+    def get_cache_directory(self):
+        """Return path to the cache directory"""
+
+        return Path.home() / config.CACHE_DIR
+
+    def cache_is_valid(self, path) -> bool:
+        """Check if current cache file is valid"""
+
+        return (time.time() - path.stat().st_mtime) < config.CACHE_TIME
+
+    def get_url_hash(self, url: str) -> str:
+        """Generates hash for given url"""
+
+        return hashlib.md5(url.encode('utf-8')).hexdigest()
+
+    def save_cache(self, url: str, page_source: str):
+        """Save page source data to file"""
+
+        url_hash = self.get_url_hash(url)
+        cache_dir = self.get_cache_directory()
+        if not cache_dir.exists():
+            cache_dir.mkdir(parents=True)
+        with (cache_dir / url_hash).open('wb') as cache_file:
+            cache_file.write(page_source)
+
+    def get_cache(self, url: str):
+        """Return cache data if any exists"""
+
+        cache = b''
+        url_hash = self.get_url_hash(url)
+        cache_dir = self.get_cache_directory()
+        if cache_dir.exists():
+            cache_path = cache_dir / url_hash
+            if cache_path.exists() and self.cache_is_valid(cache_path):
+                with cache_path.open('rb') as cache_file:
+                    cache = cache_file.read()
+
+        return cache
+
+    def clear_app_cache(self):
+        """Delete directory with cache"""
+
+        cache_dir = self.get_cache_directory()
+        shutil.rmtree(cache_dir)
+
+    def delete_invalid_cache(self):
+        """Delete all invalid (old) cache"""
+
+        cache_dir = self.get_cache_directory()
+        if cache_dir.exists():
+            path = Path(cache_dir)
+            dirs = os.listdir(path)
+            for file in dirs:
+                life_time = time.time() - (path / file).stat().st_mtime
+                if life_time > config.DAY_IN_SECONDS:
+                    os.remove(path / file)
