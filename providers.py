@@ -1,4 +1,8 @@
-""""""
+"""Weather providers for the weather application project.
+
+This file includes classes for each weather service provider.
+Providers: accuweather.com, rp5.ua
+"""
 
 import configparser
 import config
