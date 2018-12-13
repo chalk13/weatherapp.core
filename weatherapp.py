@@ -4,27 +4,10 @@ Resources: AccuWeather, RP5
 Packages: urllib
 """
 import argparse
-import configparser
 import csv
-import hashlib
 import html
-import os
-import shutil
 import sys
-import time
-from pathlib import Path
-from urllib.request import urlopen, Request
-from bs4 import BeautifulSoup
-
-DEFAULT_NAME = 'Kyiv'
-DEFAULT_URL = {'accu': 'https://www.accuweather.com/en/ua/kyiv/324505/weather-forecast/324505',
-               'rp5': 'http://rp5.ua/Weather_in_Kiev,_Kyiv'}
-BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
-                    'rp5': 'http://rp5.ua/Weather_in_the_world'}
-CONFIG_FILE = 'weatherapp.ini'
-CACHE_DIR = '.weatherappcache'
-CACHE_TIME = 900
-DAY_IN_SECONDS = 86400
+from providers import AccuWeatherProvider
 
 # TODO: weatherapp.ini must contain information from both sites
 # TODO: add option for the config commands to erase specific site settings
@@ -34,105 +17,7 @@ DAY_IN_SECONDS = 86400
 # TODO: add a command that shows the weather for tomorrow
 
 
-def get_request_headers() -> dict:
-    """Return information for headers"""
-
-    return {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'}
-
-
-def get_cache_directory():
-    """Return path to the cache directory"""
-
-    return Path.home() / CACHE_DIR
-
-
-def cache_is_valid(path) -> bool:
-    """Check if current cache file is valid"""
-
-    return (time.time() - path.stat().st_mtime) < CACHE_TIME
-
-
-def get_url_hash(url: str) -> str:
-    """Generates hash for given url"""
-
-    return hashlib.md5(url.encode('utf-8')).hexdigest()
-
-
-def save_cache(url: str, page_source: str):
-    """Save page source data to file"""
-
-    url_hash = get_url_hash(url)
-    cache_dir = get_cache_directory()
-    if not cache_dir.exists():
-        cache_dir.mkdir(parents=True)
-    with (cache_dir/url_hash).open('wb') as cache_file:
-        cache_file.write(page_source)
-
-
-def get_cache(url: str):
-    """Return cache data if any exists"""
-
-    cache = b''
-    url_hash = get_url_hash(url)
-    cache_dir = get_cache_directory()
-    if cache_dir.exists():
-        cache_path = cache_dir / url_hash
-        if cache_path.exists() and cache_is_valid(cache_path):
-            with cache_path.open('rb') as cache_file:
-                cache = cache_file.read()
-
-    return cache
-
-
-def clear_app_cache():
-    """Delete directory with cache"""
-
-    cache_dir = get_cache_directory()
-    shutil.rmtree(cache_dir)
-
-
-def delete_invalid_cache():
-    """Delete all invalid (old) cache"""
-
-    cache_dir = get_cache_directory()
-    if cache_dir.exists():
-        path = Path(cache_dir)
-        dirs = os.listdir(path)
-        for file in dirs:
-            life_time = time.time() - (path/file).stat().st_mtime
-            if life_time > DAY_IN_SECONDS:
-                os.remove(path/file)
-
-
-def get_page_from_server(page_url: str, refresh: bool = False) -> str:
-    """Return information about the page in the string format"""
-
-    cache = get_cache(page_url)
-    if cache and not refresh:
-        page = cache
-    else:
-        request = Request(page_url, headers=get_request_headers())
-        page = urlopen(request).read()
-        save_cache(page_url, page)
-
-    return page.decode('utf-8')
-
-
-def get_locations_accu(locations_url: str, refresh: bool = False) -> list:
-    """Return a list of locations and related urls"""
-
-    locations_page = get_page_from_server(locations_url, refresh=refresh)
-    soup = BeautifulSoup(locations_page, 'html.parser')
-
-    locations = []
-    for location in soup.find_all('li', class_='drilldown cl'):
-        url = location.find('a').attrs['href']
-        location = location.find('em').text
-        locations.append((location, url))
-    return locations
-
-
-def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
+'''def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
     """Return a list of locations and related urls"""
 
     locations_page = get_page_from_server(locations_url, refresh=refresh)
@@ -167,93 +52,6 @@ def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
     return locations
 
 
-def get_configuration_file():
-    """Return path to the CONFIG_FILE"""
-
-    return Path.home() / CONFIG_FILE
-
-
-def save_configuration(command: str, name: str, url: str):
-    """Write the location to the configfile"""
-
-    parser = configparser.ConfigParser()
-    parser[command] = {'name': name, 'url': url}
-    with open(get_configuration_file(), 'w') as configfile:
-        parser.write(configfile)
-
-
-def get_configuration(command: str) -> tuple:
-    """Return name of the city and related url"""
-
-    name = DEFAULT_NAME
-    url = DEFAULT_URL[command]
-
-    parser = configparser.ConfigParser()
-    parser.read(get_configuration_file())
-
-    if command in parser.sections():
-        config = parser[command]
-        name, url = config['name'], config['url']
-
-    return name, url
-
-
-def configuration(command: str, refresh: bool = False):
-    """Set the location for which to display the weather"""
-
-    if command == 'accu':
-        locations = get_locations_accu(BROWSE_LOCATIONS[command],
-                                       refresh=refresh)
-    elif command == 'rp5':
-        locations = get_locations_rp5(BROWSE_LOCATIONS[command],
-                                      refresh=refresh)
-
-    while locations:
-        for index, location in enumerate(locations):
-            print(f'{index + 1}) {location[0]}')
-        selected_index = int(input('Please select location: '))
-        location = locations[selected_index - 1]
-        if command == 'accu':
-            locations = get_locations_accu(location[1], refresh=refresh)
-        elif command == 'rp5':
-            locations = get_locations_rp5(location[1], refresh=refresh)
-
-    save_configuration(command, *location)
-
-
-def get_weather_accu(page: str, refresh: bool = False) -> dict:
-    """Return information collected from AccuWeather"""
-
-    weather_page = BeautifulSoup(page, 'html.parser')
-    current_day_selection = weather_page.find('li', {'class': ['day current first cl',
-                                                               'night current first cl']})
-
-    weather_info = {}
-    if current_day_selection:
-        current_day_url = current_day_selection.find('a').attrs['href']
-        if current_day_url:
-            current_day_page = get_page_from_server(current_day_url,
-                                                    refresh=refresh)
-            if current_day_page:
-                current_day = BeautifulSoup(current_day_page, 'html.parser')
-                weather_details = current_day.find('div', attrs={'id': 'detail-now'})
-                temp = weather_details.find('span', class_='large-temp')
-                if temp:
-                    weather_info['Temperature'] = temp.text
-                condition = weather_details.find('span', class_='cond')
-                if condition:
-                    weather_info['Condition'] = condition.text
-
-                feel_temp = weather_details.find('span', class_='small-temp')
-                if feel_temp:
-                    weather_info['RealFeel'] = feel_temp.text
-                wind_info = weather_details.find_all('li', class_='wind')
-                if wind_info:
-                    weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
-
-    return weather_info
-
-
 def get_weather_rp5(page: str) -> dict:
     """Return information collected from RP5"""
 
@@ -281,10 +79,10 @@ def get_weather_rp5(page: str) -> dict:
             start = first_sentence.rfind(',') + 2
             weather_info['Wind'] = first_sentence[start:]
 
-    return weather_info
+    return weather_info'''
 
 
-def get_weather_info_to_save(command: str) -> dict:
+'''def get_weather_info_to_save(command: str) -> dict:
     """Return information from weather site to save"""
 
     if command == 'accu':
@@ -294,10 +92,10 @@ def get_weather_info_to_save(command: str) -> dict:
         city_name, content = get_city_name_page_content(command)
         weather_info = get_weather_rp5(content)
 
-    return weather_info
+    return weather_info'''
 
 
-def write_info_to_csv(command: str):
+'''def write_info_to_csv(command: str):
     """Write data to a CSV file"""
 
     info = get_weather_info_to_save(command)
@@ -307,7 +105,7 @@ def write_info_to_csv(command: str):
     output_writer.writerow(['Parameters', 'Description'])
     for key, value in info.items():
         output_writer.writerow([key, value])
-    output_file.close()
+    output_file.close()'''
 
 
 def program_output(city: str, info: dict):
@@ -339,38 +137,37 @@ def program_output(city: str, info: dict):
     print(border_line(length_column_1, length_column_2))
 
 
-def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
+'''def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
     """Return name of the city and page content"""
 
     city_name, city_url = get_configuration(command)
     content = get_page_from_server(city_url, refresh=refresh)
-    return city_name, content
+    return city_name, content'''
 
 
 def get_weather_info(command: str, refresh: bool = False):
     """Function to get weather info"""
 
-    city_name, content = get_city_name_page_content(command,
-                                                    refresh=refresh)
+    accu = AccuWeatherProvider()
 
     if command == 'accu':
         print(f'Information from {command.upper()} weather site:')
-        program_output(city_name, get_weather_accu(content))
-    if command == 'rp5':
-        print(f'Information from {command.upper()} weather site:')
-        program_output(city_name, get_weather_rp5(content))
+        program_output(accu.location, accu.run(refresh=refresh))
+#    if command == 'rp5':
+#        print(f'Information from {command.upper()} weather site:')
+#        program_output(city_name, get_weather_rp5(content))
 
 
 def main(argv):
     """Main entry point"""
 
-    delete_invalid_cache()
+#    delete_invalid_cache()
 
     known_commands = {'accu': get_weather_info,
-                      'rp5': get_weather_info,
-                      'config': configuration,
-                      'save_to_csv': write_info_to_csv,
-                      'clear-cache': clear_app_cache}
+                      'rp5': get_weather_info}
+#                      'config': configuration,
+#                      'save_to_csv': write_info_to_csv,
+#                      'clear-cache': clear_app_cache}
 
     parser = argparse.ArgumentParser(description='Application information')
     parser.add_argument('command', help='Service name', nargs='*')
