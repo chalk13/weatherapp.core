@@ -152,10 +152,10 @@ class AccuWeatherProvider:
         """Set the location for which to display the weather"""
 
         if command == 'accu':
-            locations = self.get_locations_accu(BROWSE_LOCATIONS[command],
+            locations = self.get_locations_accu(config.BROWSE_LOCATIONS[command],
                                                 refresh=refresh)
         elif command == 'rp5':
-            locations = self.get_locations_rp5(BROWSE_LOCATIONS[command],
+            locations = self.get_locations_rp5(config.BROWSE_LOCATIONS[command],
                                                refresh=refresh)
 
         while locations:
@@ -201,3 +201,8 @@ class AccuWeatherProvider:
                         weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
 
         return weather_info
+
+    def run(self, refresh=False):
+        """Main run for provider"""
+        content = self.get_page_from_server(self.url, refresh=refresh)
+        return self.get_weather_accu(content, refresh=refresh)
