@@ -111,11 +111,16 @@ def main(argv):
 
 #    delete_invalid_cache()
 
+    # Both AccuWeatherProvider and Rp5WeatherProvider classes have
+    # the function clear_app_cache (will be fixed later)
+    # That's why we can use each of them to clear cache.
+    accu = AccuWeatherProvider()
+
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
 #                      'config': configuration,
-                      'save_to_csv': write_info_to_csv}
-#                      'clear-cache': clear_app_cache}
+                      'save_to_csv': write_info_to_csv,
+                      'clear-cache': accu.clear_app_cache}
 
     parser = argparse.ArgumentParser(description='Application information')
     parser.add_argument('command', help='Service name', nargs='*')
