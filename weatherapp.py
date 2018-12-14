@@ -18,20 +18,23 @@ from providers import Rp5WeatherProvider
 # TODO: add a command that shows the weather for tomorrow
 
 
-'''def get_weather_info_to_save(command: str) -> dict:
+def get_weather_info_to_save(command: str) -> dict:
     """Return information from weather site to save"""
 
+    accu = AccuWeatherProvider(command)
+    rp5 = Rp5WeatherProvider(command)
+
     if command == 'accu':
-        city_name, content = get_city_name_page_content(command)
-        weather_info = get_weather_accu(content)
+        _, content = get_city_name_page_content(command)
+        weather_info = accu.get_weather_accu(content)
     if command == 'rp5':
-        city_name, content = get_city_name_page_content(command)
-        weather_info = get_weather_rp5(content)
+        _, content = get_city_name_page_content(command)
+        weather_info = rp5.get_weather_rp5(content)
 
-    return weather_info'''
+    return weather_info
 
 
-'''def write_info_to_csv(command: str):
+def write_info_to_csv(command: str):
     """Write data to a CSV file"""
 
     info = get_weather_info_to_save(command)
@@ -41,7 +44,7 @@ from providers import Rp5WeatherProvider
     output_writer.writerow(['Parameters', 'Description'])
     for key, value in info.items():
         output_writer.writerow([key, value])
-    output_file.close()'''
+    output_file.close()
 
 
 def program_output(city: str, info: dict):
@@ -73,12 +76,20 @@ def program_output(city: str, info: dict):
     print(border_line(length_column_1, length_column_2))
 
 
-'''def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
+def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
     """Return name of the city and page content"""
 
-    city_name, city_url = get_configuration(command)
-    content = get_page_from_server(city_url, refresh=refresh)
-    return city_name, content'''
+    accu = AccuWeatherProvider(command)
+    rp5 = Rp5WeatherProvider(command)
+
+    if command == 'accu':
+        city_name, city_url = accu.get_configuration(command)
+        content = accu.get_page_from_server(city_url, refresh=refresh)
+    if command == 'rp5':
+        city_name, city_url = rp5.get_configuration(command)
+        content = rp5.get_page_from_server(city_url, refresh=refresh)
+
+    return city_name, content
 
 
 def get_weather_info(command: str, refresh: bool = False):
@@ -101,9 +112,9 @@ def main(argv):
 #    delete_invalid_cache()
 
     known_commands = {'accu': get_weather_info,
-                      'rp5': get_weather_info}
+                      'rp5': get_weather_info,
 #                      'config': configuration,
-#                      'save_to_csv': write_info_to_csv,
+                      'save_to_csv': write_info_to_csv}
 #                      'clear-cache': clear_app_cache}
 
     parser = argparse.ArgumentParser(description='Application information')
