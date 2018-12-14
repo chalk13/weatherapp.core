@@ -148,7 +148,7 @@ class AccuWeatherProvider:
             locations.append((location, url))
         return locations
 
-    def configuration(self, refresh: bool = False):
+    def configuration(self, command: str, refresh: bool = False):
         """Set the location for which to display the weather"""
 
         locations = self.get_locations_accu(config.BROWSE_LOCATIONS[command],
