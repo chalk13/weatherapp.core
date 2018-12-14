@@ -8,6 +8,7 @@ import csv
 import html
 import sys
 from providers import AccuWeatherProvider
+from providers import Rp5WeatherProvider
 
 # TODO: weatherapp.ini must contain information from both sites
 # TODO: add option for the config commands to erase specific site settings
@@ -15,71 +16,6 @@ from providers import AccuWeatherProvider
 # TODO: add option which takes the num of sec on which to cache the site
 # --cache-for
 # TODO: add a command that shows the weather for tomorrow
-
-
-'''def get_locations_rp5(locations_url: str, refresh: bool = False) -> list:
-    """Return a list of locations and related urls"""
-
-    locations_page = get_page_from_server(locations_url, refresh=refresh)
-    soup = BeautifulSoup(locations_page, 'html.parser')
-
-    locations = []
-    # TODO: try rewrite logic in an easier way
-    places = soup.find_all('div', class_='country_map_links')
-    if not places:
-        places = soup.find_all('a', class_='href20')
-        if not places:
-            places = soup.find_all('div', class_='city_link')
-            for place in places:
-                url = place.find('a').attrs['href']
-                url = f'http://rp5.ua/{url}'
-                location = place.text
-                locations.append((location, url))
-                return locations
-        for place in places:
-            url = place.attrs['href']
-            url = f'http://rp5.ua/{url}'
-            location = place.text
-            locations.append((location, url))
-    else:
-        for location in places:
-            url = location.find('b')
-            url = url.find('a').attrs['href']
-            url = f'http://rp5.ua{url}'
-            location = location.find('b').text[:-1]
-            locations.append((location, url))
-
-    return locations
-
-
-def get_weather_rp5(page: str) -> dict:
-    """Return information collected from RP5"""
-
-    weather_page = BeautifulSoup(page, 'html.parser')
-    current_day_temperature = weather_page.find('div', class_='ArchiveTemp')
-    current_day_weather_details = weather_page.find('div', id='forecastShort-content')
-
-    weather_info = {}
-    if current_day_temperature:
-        temperature = current_day_temperature.find('span', class_='t_0')
-        if temperature:
-            weather_info['Temperature'] = temperature.text
-    if current_day_weather_details:
-        condition = current_day_weather_details.find('b')
-        if condition:
-            start_cond = condition.text.find(',', condition.text.find(',') + 1) + 2
-            end_cond = condition.text.find(',', start_cond + 1)
-            weather_info['Condition'] = condition.text[start_cond:end_cond]
-        today_expect = current_day_weather_details.find('span', class_='t_0')
-        if today_expect:
-            weather_info['Expect'] = today_expect.text[:-3]
-        if condition:
-            first_sentence_end = condition.text.find('. ')
-            first_sentence = condition.text[:first_sentence_end]
-            start = first_sentence.rfind(',') + 2
-            weather_info['Wind'] = first_sentence[start:]
-
-    return weather_info'''
 
 
 '''def get_weather_info_to_save(command: str) -> dict:
@@ -149,13 +85,14 @@ def get_weather_info(command: str, refresh: bool = False):
     """Function to get weather info"""
 
     accu = AccuWeatherProvider(command)
+    rp5 = Rp5WeatherProvider(command)
 
     if command == 'accu':
         print(f'Information from {command.upper()} weather site:')
         program_output(accu.location, accu.run(refresh=refresh))
-#    if command == 'rp5':
-#        print(f'Information from {command.upper()} weather site:')
-#        program_output(city_name, get_weather_rp5(content))
+    if command == 'rp5':
+        print(f'Information from {command.upper()} weather site:')
+        program_output(rp5.location, rp5.run(refresh=refresh))
 
 
 def main(argv):
