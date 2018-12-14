@@ -148,25 +148,18 @@ class AccuWeatherProvider:
             locations.append((location, url))
         return locations
 
-    def configuration(self, command: str, refresh: bool = False):
+    def configuration(self, refresh: bool = False):
         """Set the location for which to display the weather"""
 
-        if command == 'accu':
-            locations = self.get_locations_accu(config.BROWSE_LOCATIONS[command],
-                                                refresh=refresh)
-        elif command == 'rp5':
-            locations = self.get_locations_rp5(config.BROWSE_LOCATIONS[command],
-                                               refresh=refresh)
+        locations = self.get_locations_accu(config.BROWSE_LOCATIONS[command],
+                                            refresh=refresh)
 
         while locations:
             for index, location in enumerate(locations):
                 print(f'{index + 1}) {location[0]}')
             selected_index = int(input('Please select location: '))
             location = locations[selected_index - 1]
-            if command == 'accu':
-                locations = self.get_locations_accu(location[1], refresh=refresh)
-            elif command == 'rp5':
-                locations = self.get_locations_rp5(location[1], refresh=refresh)
+            locations = self.get_locations_accu(location[1], refresh=refresh)
 
         self.save_configuration(command, *location)
 
