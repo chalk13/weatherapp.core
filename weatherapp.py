@@ -109,12 +109,13 @@ def get_weather_info(command: str, refresh: bool = False):
 def main(argv):
     """Main entry point"""
 
-#    delete_invalid_cache()
-
     # Both AccuWeatherProvider and Rp5WeatherProvider classes have
-    # the function clear_app_cache (will be fixed later)
+    # the function clear_app_cache and delete_invalid_cache.
+    # This will be fixed later.
     # That's why we can use each of them to clear cache.
     accu = AccuWeatherProvider()
+
+    accu.delete_invalid_cache()
 
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
