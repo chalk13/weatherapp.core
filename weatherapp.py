@@ -114,12 +114,14 @@ def main(argv):
     # This will be fixed later.
     # That's why we can use each of them to clear cache.
     accu = AccuWeatherProvider()
+    rp5 = Rp5WeatherProvider()
 
     accu.delete_invalid_cache()
 
     known_commands = {'accu': get_weather_info,
                       'rp5': get_weather_info,
-#                      'config': configuration,
+                      'config': {'accu': accu.configuration,
+                                 'rp5': rp5.configuration},
                       'save_to_csv': write_info_to_csv,
                       'clear-cache': accu.clear_app_cache}
 
@@ -138,9 +140,12 @@ def main(argv):
             known_commands[command]()
         elif command == 'save_to_csv':
             known_commands[command](weather_site)
-        elif command in known_commands:
+        elif command == 'accu' or command == 'rp5':
             known_commands[command](weather_site,
                                     refresh=params.refresh)
+        elif command == 'config':
+            known_commands[command][weather_site](weather_site,
+                                                  refresh=params.refresh)
         else:
             print('Unknown command provided.')
             sys.exit(1)
