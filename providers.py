@@ -207,12 +207,13 @@ class Rp5WeatherProvider:
     """Weather provider for Rp5Weather site.
     """
 
-    def __init__(self, command):
+    def __init__(self, command=None):
         self.name = config.RP5_PROVIDER_NAME
 
-        location, url = self.get_configuration(command)
-        self.location = location
-        self.url = url
+        if command is not None:
+            location, url = self.get_configuration(command)
+            self.location = location
+            self.url = url
 
     def get_configuration_file(self):
         """Path to the CONFIG_FILE.
