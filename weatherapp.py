@@ -140,7 +140,7 @@ def main(argv):
             known_commands[command]()
         elif command == 'save_to_csv':
             known_commands[command](weather_site)
-        elif command == 'accu' or command == 'rp5':
+        elif command in ('accu', 'rp5'):
             known_commands[command](weather_site,
                                     refresh=params.refresh)
         elif command == 'config':
