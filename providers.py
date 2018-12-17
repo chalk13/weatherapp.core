@@ -17,6 +17,10 @@ from bs4 import BeautifulSoup
 import config
 
 
+class WeatherProvider:
+    """Base weather provider"""
+
+
 class AccuWeatherProvider:
 
     """Weather provider for AccuWeather site.
