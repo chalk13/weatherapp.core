@@ -120,6 +120,24 @@ class WeatherProvider:
                 if life_time > config.DAY_IN_SECONDS:
                     os.remove(path / file)
 
+    def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
+        """Return information about the page in the string format"""
+
+        cache = self.get_cache(page_url)
+        if cache and not refresh:
+            page = cache
+        else:
+            request = Request(page_url, headers=self.get_request_headers())
+            page = urlopen(request).read()
+            self.save_cache(page_url, page)
+
+        return page.decode('utf-8')
+
+    def run(self, refresh=False):
+        """Main run for provider"""
+        content = self.get_page_from_server(self.url, refresh=refresh)
+        return self.get_weather_rp5(content)
+
 
 class AccuWeatherProvider:
 
@@ -133,19 +151,6 @@ class AccuWeatherProvider:
             location, url = self.get_configuration(command)
             self.location = location
             self.url = url
-
-    def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
-        """Return information about the page in the string format"""
-
-        cache = self.get_cache(page_url)
-        if cache and not refresh:
-            page = cache
-        else:
-            request = Request(page_url, headers=self.get_request_headers())
-            page = urlopen(request).read()
-            self.save_cache(page_url, page)
-
-        return page.decode('utf-8')
 
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
@@ -207,11 +212,6 @@ class AccuWeatherProvider:
 
         return weather_info
 
-    def run(self, refresh=False):
-        """Main run for provider"""
-        content = self.get_page_from_server(self.url, refresh=refresh)
-        return self.get_weather_accu(content, refresh=refresh)
-
 
 class Rp5WeatherProvider:
 
@@ -225,19 +225,6 @@ class Rp5WeatherProvider:
             location, url = self.get_configuration(command)
             self.location = location
             self.url = url
-
-    def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
-        """Return information about the page in the string format"""
-
-        cache = self.get_cache(page_url)
-        if cache and not refresh:
-            page = cache
-        else:
-            request = Request(page_url, headers=self.get_request_headers())
-            page = urlopen(request).read()
-            self.save_cache(page_url, page)
-
-        return page.decode('utf-8')
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
@@ -316,8 +303,3 @@ class Rp5WeatherProvider:
                 weather_info['Wind'] = first_sentence[start:]
 
         return weather_info
-
-    def run(self, refresh=False):
-        """Main run for provider"""
-        content = self.get_page_from_server(self.url, refresh=refresh)
-        return self.get_weather_rp5(content)
