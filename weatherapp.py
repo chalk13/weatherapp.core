@@ -47,35 +47,6 @@ def write_info_to_csv(command: str):
     output_file.close()
 
 
-def program_output(city: str, info: dict):
-    """Print the application output in readable form"""
-
-    length_column_1 = max(len(key) for key in info.keys())
-    length_column_2 = max(len(value) for value in info.values())
-
-    print(f'{city.upper()}')
-
-    def border_line(column_1: int, column_2: int) -> str:
-        """Print a line for dividing information"""
-
-        line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
-        return line
-
-    def status_msg(msg: str, state: str) -> str:
-        """Print weather information"""
-
-        result = f"| {msg} {' ' * (length_column_1 - len(msg))}" \
-                 f"| {state} {' ' * (length_column_2 - len(state))}|\n"
-        return result
-
-    print(border_line(length_column_1, length_column_2))
-
-    for key, value in info.items():
-        print(status_msg(key, html.unescape(value)), end='')
-
-    print(border_line(length_column_1, length_column_2))
-
-
 def get_city_name_page_content(command: str, refresh: bool = False) -> tuple:
     """Return name of the city and page content"""
 
