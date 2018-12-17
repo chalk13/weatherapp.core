@@ -66,4 +66,10 @@ class App:
 
 
 def main(argv=sys.argv[1:]):
+    """Main entry point"""
+
     return App().run(argv)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
