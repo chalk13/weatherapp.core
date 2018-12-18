@@ -152,6 +152,12 @@ class AccuWeatherProvider(WeatherProvider):
             self.location = location
             self.url = url'''
 
+    name = ''
+    title = ''
+
+    default_location = ''
+    default_url = ''
+
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
 
@@ -225,6 +231,12 @@ class Rp5WeatherProvider(WeatherProvider):
             location, url = self.get_configuration(command)
             self.location = location
             self.url = url'''
+
+    name = ''
+    title = ''
+
+    default_location = ''
+    default_url = ''
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
