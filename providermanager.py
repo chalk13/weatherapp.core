@@ -26,3 +26,9 @@ class ProviderManager:
 
     def __len__(self):
         return len(self._providers)
+
+    def __contains__(self, name):
+        return name in self._providers
+
+    def __getitem__(self, item):
+        return self._providers[item]
