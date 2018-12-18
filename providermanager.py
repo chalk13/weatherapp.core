@@ -1,8 +1,18 @@
+from providers import AccuWeatherProvider, Rp5WeatherProvider
+
+
 class ProviderManager:
     """Discovers registered providers and load them"""
 
     def __init__(self):
         self._providers = {}
+        self._load_providers()
+
+    def _load_providers(self):
+        """Load all existing providers"""
+
+        for provider in [AccuWeatherProvider, Rp5WeatherProvider]:
+            self.add(provider.name, provider)
 
     def add(self, name, provider):
         """Add new provider by name"""
