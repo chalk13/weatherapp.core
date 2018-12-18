@@ -23,3 +23,6 @@ class ProviderManager:
         """Get provider by name"""
 
         return self._providers.get([name], None)
+
+    def __len__(self):
+        return len(self._providers)
