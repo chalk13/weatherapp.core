@@ -20,7 +20,7 @@ import config
 class WeatherProvider:
     """Base weather provider"""
 
-    def __init(self, app):
+    def __init__(self, app):
         self.app = app
 
         location, url = self.get_configuration()
@@ -139,18 +139,18 @@ class WeatherProvider:
         return self.get_weather_rp5(content)
 
 
-class AccuWeatherProvider:
+class AccuWeatherProvider(WeatherProvider):
 
     """Weather provider for AccuWeather site.
     """
 
-    def __init__(self, command=None):
+    '''def __init__(self, command=None):
         self.name = config.ACCU_PROVIDER_NAME
 
         if command is not None:
             location, url = self.get_configuration(command)
             self.location = location
-            self.url = url
+            self.url = url'''
 
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
@@ -213,18 +213,18 @@ class AccuWeatherProvider:
         return weather_info
 
 
-class Rp5WeatherProvider:
+class Rp5WeatherProvider(WeatherProvider):
 
     """Weather provider for Rp5Weather site.
     """
 
-    def __init__(self, command=None):
+    '''def __init__(self, command=None):
         self.name = config.RP5_PROVIDER_NAME
 
         if command is not None:
             location, url = self.get_configuration(command)
             self.location = location
-            self.url = url
+            self.url = url'''
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
