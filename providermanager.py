@@ -7,4 +7,5 @@ class ProviderManager:
     def get(self, name):
         """Get provider by name"""
 
-        return self._providers[name]
+        return self._providers.get([name], None)
+    
