@@ -3,4 +3,8 @@ class ProviderManager:
 
     def __init__(self):
         self._providers = {}
-    
+
+    def get(self, name):
+        """Get provider by name"""
+
+        return self._providers[name]
