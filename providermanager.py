@@ -1,3 +1,5 @@
+"""Manager to view registered providers and download them"""
+
 from providers import AccuWeatherProvider, Rp5WeatherProvider
 
 
