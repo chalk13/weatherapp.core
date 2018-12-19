@@ -151,7 +151,7 @@ class AccuWeatherProvider(WeatherProvider):
     title = config.ACCU_PROVIDER_TITLE
 
     default_location = config.DEFAULT_NAME
-    default_url = config.DEFAULT_URL
+    default_url = config.DEFAULT_URL_ACCU
 
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
@@ -236,7 +236,7 @@ class Rp5WeatherProvider(WeatherProvider):
     title = config.RP5_PROVIDER_TITLE
 
     default_location = config.DEFAULT_NAME
-    default_url = config.DEFAULT_URL
+    default_url = config.DEFAULT_URL_RP5
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
