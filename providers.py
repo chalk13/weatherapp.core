@@ -133,11 +133,6 @@ class WeatherProvider:
 
         return page.decode('utf-8')
 
-    def run(self, refresh=False):
-        """Main run for provider"""
-        content = self.get_page_from_server(self.url, refresh=refresh)
-        return self.get_weather_rp5(content)
-
 
 class AccuWeatherProvider(WeatherProvider):
 
@@ -217,6 +212,11 @@ class AccuWeatherProvider(WeatherProvider):
                         weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
 
         return weather_info
+
+    def run(self, refresh=False):
+        """Main run for provider"""
+        content = self.get_page_from_server(self.url, refresh=refresh)
+        return self.get_weather_accu(content, refresh=refresh)
 
 
 class Rp5WeatherProvider(WeatherProvider):
@@ -315,3 +315,8 @@ class Rp5WeatherProvider(WeatherProvider):
                 weather_info['Wind'] = first_sentence[start:]
 
         return weather_info
+
+    def run(self, refresh=False):
+        """Main run for provider"""
+        content = self.get_page_from_server(self.url, refresh=refresh)
+        return self.get_weather_rp5(content)
