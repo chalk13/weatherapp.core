@@ -23,12 +23,14 @@ class App:
 
         return arg_parser
 
-    def program_output(self, city: str, info: dict):
+    def program_output(self, title, city: str, info: dict):
         """Print the application output in readable form"""
 
         length_column_1 = max(len(key) for key in info.keys())
         length_column_2 = max(len(value) for value in info.values())
 
+        print(f'{title}:')
+        print('#'*10)
         print(f'{city.upper()}')
 
         def border_line(column_1: int, column_2: int) -> str:
@@ -64,14 +66,14 @@ class App:
             # run all weather providers by default
             for name, provider in self.providermanager._providers.items():
                 provider_obj = provider(self)
-                self.produce_output(provider_obj.title,
+                self.program_output(provider_obj.title,
                                     provider_obj.location,
                                     provider_obj.run())
         elif command_name in self.providermanager:
             # run specific provider
             provider = self.providermanager[command_name]
             provider_obj = provider(self)
-            self.produce_output(provider_obj.title,
+            self.program_output(provider_obj.title,
                                 provider_obj.location,
                                 provider_obj.run())
 
