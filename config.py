@@ -2,6 +2,10 @@
 
 ACCU_PROVIDER_NAME = 'accu'
 RP5_PROVIDER_NAME = 'rp5'
+
+ACCU_PROVIDER_TITLE = 'AccuWeather'
+RP5_PROVIDER_TITLE = 'RP5'
+
 FAKE_MOZILLA_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'
 
 DEFAULT_NAME = 'Kyiv'
