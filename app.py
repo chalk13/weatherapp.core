@@ -16,7 +16,7 @@ class App:
 
     def _arg_parse(self):
         """Initialize argument parser."""
-        arg_parser = ArgumentParser(add_help=False)
+        arg_parser = ArgumentParser(description='Application information', add_help=False)
         arg_parser.add_argument('command', help='Command', nargs='?')
         arg_parser.add_argument('--refresh', help='Bypass caches',
                                 action='store_true')
