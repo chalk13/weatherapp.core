@@ -23,7 +23,7 @@ class WeatherProvider:
     def __init__(self, app):
         self.app = app
 
-        location, url = self.get_configuration()
+        location, url = self.get_configuration(self.app.options.command)
         self.location = location
         self.url = url
 
