@@ -29,8 +29,8 @@ class App:
         length_column_1 = max(len(key) for key in info.keys())
         length_column_2 = max(len(value) for value in info.values())
 
-        print(f'{title}:')
-        print('#'*10)
+        print(f'{title}')
+        print('-'*len(title))
         print(f'{city.upper()}')
 
         def border_line(column_1: int, column_2: int) -> str:
