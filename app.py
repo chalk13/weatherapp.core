@@ -2,9 +2,13 @@
 
 import html
 import sys
+import shutil
 from argparse import ArgumentParser
+from pathlib import Path
 
 from providermanager import ProviderManager
+
+import config
 
 
 class App:
@@ -23,6 +27,17 @@ class App:
                                 action='store_true')
 
         return arg_parser
+
+    def get_cache_directory(self):
+        """Return path to the cache directory"""
+
+        return Path.home() / config.CACHE_DIR
+
+    def clear_app_cache(self):
+        """Delete directory with cache"""
+
+        cache_dir = self.get_cache_directory()
+        shutil.rmtree(cache_dir)
 
     def program_output(self, title: str, city: str, info: dict):
         """Print the application output in readable form"""
@@ -63,7 +78,9 @@ class App:
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
 
-        if not command_name:
+        if command_name == 'clear-cache':
+            self.clear_app_cache()
+        elif not command_name:
             # run all weather providers by default
             for name, provider in self.providermanager._providers.items():
                 provider_obj = provider(self)
