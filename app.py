@@ -1,8 +1,10 @@
 """Main module of the application"""
 
 import html
+import os
 import sys
 import shutil
+import time
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -39,6 +41,18 @@ class App:
         cache_dir = self.get_cache_directory()
         shutil.rmtree(cache_dir)
 
+    def delete_invalid_cache(self):
+        """Delete all invalid (old) cache"""
+
+        cache_dir = self.get_cache_directory()
+        if cache_dir.exists():
+            path = Path(cache_dir)
+            dirs = os.listdir(path)
+            for file in dirs:
+                life_time = time.time() - (path / file).stat().st_mtime
+                if life_time > config.DAY_IN_SECONDS:
+                    os.remove(path / file)
+
     def program_output(self, title: str, city: str, info: dict):
         """Print the application output in readable form"""
 
@@ -74,6 +88,8 @@ class App:
 
         :param argv: list of passed arguments
         """
+
+        self.delete_invalid_cache()
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
