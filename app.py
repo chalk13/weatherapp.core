@@ -74,12 +74,12 @@ class App:
 
         info = self.get_weather_info_to_save(weather_site)
 
-        output_file = open('weather_data.csv', 'w', newline='')
-        output_writer = csv.writer(output_file)
-        output_writer.writerow(['Parameters', 'Description'])
-        for key, value in info.items():
-            output_writer.writerow([key, value])
-        output_file.close()
+        with open('weather_data.csv', 'w', newline='') as output_file:
+            field_names = ['Parameters', 'Description']
+            writer = csv.DictWriter(output_file, fieldnames=field_names)
+            writer.writeheader()
+            for key, value in info.items():
+                writer.writerow({'Parameters': key, 'Description': value})
 
     def get_city_name_page_content(self, weather_site: str, refresh: bool = False) -> tuple:
         """Return name of the city and page content"""
