@@ -23,7 +23,7 @@ class WeatherProvider:
     def __init__(self, app):
         self.app = app
 
-        location, url = self.get_configuration(self.app.options.command)
+        location, url = self.get_configuration()
         self.location = location
         self.url = url
 
@@ -43,18 +43,18 @@ class WeatherProvider:
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
-    def get_configuration(self, command: str) -> tuple:
+    def get_configuration(self) -> tuple:
         """Returns name of the city and related url"""
 
-        name = config.DEFAULT_NAME
-        url = config.DEFAULT_URL[command]
+        name = self.default_location
+        url = self.default_url
 
         parser = configparser.ConfigParser()
         parser.read(self.get_configuration_file())
 
-        if command in parser.sections():
-            configuration = parser[command]
-            name, url = configuration['name'], configuration['url']
+        if config.CONFIG_LOCATION in parser.sections():
+            location_config = self.configuration[config.CONFIG_LOCATION]
+            name, url = location_config['name'], location_config['url']
 
         return name, url
 
