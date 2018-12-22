@@ -24,7 +24,7 @@ class App:
 
         return arg_parser
 
-    def program_output(self, title, city: str, info: dict):
+    def program_output(self, title: str, city: str, info: dict):
         """Print the application output in readable form"""
 
         length_column_1 = max(len(key) for key in info.keys())
