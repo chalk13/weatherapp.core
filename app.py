@@ -54,24 +54,25 @@ class App:
                 if life_time > config.DAY_IN_SECONDS:
                     os.remove(path / file)
 
-    def get_weather_info_to_save(self) -> dict:
+    def get_weather_info_to_save(self, weather_site: str) -> dict:
         """Return information from weather site to save"""
 
-        for name, provider in self.providermanager._providers.items():
+        if weather_site in self.providermanager:
+            provider = self.providermanager[weather_site]
             provider_obj = provider(self)
-            if name == 'accu':
-                _, content = self.get_city_name_page_content()
+            if weather_site == 'accu':
+                _, content = self.get_city_name_page_content(weather_site)
                 weather_info = provider_obj.get_weather_accu(content)
-            if name == 'rp5':
-                _, content = self.get_city_name_page_content()
+            if weather_site == 'rp5':
+                _, content = self.get_city_name_page_content(weather_site)
                 weather_info = provider_obj.get_weather_rp5(content)
 
         return weather_info
 
-    def write_info_to_csv(self):
+    def write_info_to_csv(self, weather_site: str):
         """Write data to a CSV file"""
 
-        info = self.get_weather_info_to_save()
+        info = self.get_weather_info_to_save(weather_site)
 
         output_file = open('weather_data.csv', 'w', newline='')
         output_writer = csv.writer(output_file)
@@ -80,15 +81,16 @@ class App:
             output_writer.writerow([key, value])
         output_file.close()
 
-    def get_city_name_page_content(self, refresh: bool = False) -> tuple:
+    def get_city_name_page_content(self, weather_site: str, refresh: bool = False) -> tuple:
         """Return name of the city and page content"""
 
-        for name, provider in self.providermanager._providers.items():
+        if weather_site in self.providermanager:
+            provider = self.providermanager[weather_site]
             provider_obj = provider(self)
-            if name == 'accu':
+            if weather_site == 'accu':
                 city_name, city_url = provider_obj.get_configuration()
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
-            if name == 'rp5':
+            if weather_site == 'rp5':
                 city_name, city_url = provider_obj.get_configuration()
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
 
@@ -134,13 +136,12 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
-#        weather_site = remaining_args[0]
+        weather_site = remaining_args[0]
 
         if command_name == 'clear-cache':
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
-            self.write_info_to_csv()
-#            self.write_info_to_csv(weather_site)
+            self.write_info_to_csv(weather_site)
         elif not command_name:
             # run all weather providers by default
             for name, provider in self.providermanager._providers.items():
