@@ -139,14 +139,6 @@ class AccuWeatherProvider(WeatherProvider):
     """Weather provider for AccuWeather site.
     """
 
-    '''def __init__(self, command=None):
-        self.name = config.ACCU_PROVIDER_NAME
-
-        if command is not None:
-            location, url = self.get_configuration(command)
-            self.location = location
-            self.url = url'''
-
     name = config.ACCU_PROVIDER_NAME
     title = config.ACCU_PROVIDER_TITLE
 
@@ -223,14 +215,6 @@ class Rp5WeatherProvider(WeatherProvider):
 
     """Weather provider for Rp5Weather site.
     """
-
-    '''def __init__(self, command=None):
-        self.name = config.RP5_PROVIDER_NAME
-
-        if command is not None:
-            location, url = self.get_configuration(command)
-            self.location = location
-            self.url = url'''
 
     name = config.RP5_PROVIDER_NAME
     title = config.RP5_PROVIDER_TITLE
