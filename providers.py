@@ -6,7 +6,6 @@ Providers: accuweather.com, rp5.ua
 
 import configparser
 import hashlib
-import os
 import time
 from pathlib import Path
 from urllib.request import urlopen, Request
@@ -100,18 +99,6 @@ class WeatherProvider:
                     cache = cache_file.read()
 
         return cache
-
-    def delete_invalid_cache(self):
-        """Delete all invalid (old) cache"""
-
-        cache_dir = self.get_cache_directory()
-        if cache_dir.exists():
-            path = Path(cache_dir)
-            dirs = os.listdir(path)
-            for file in dirs:
-                life_time = time.time() - (path / file).stat().st_mtime
-                if life_time > config.DAY_IN_SECONDS:
-                    os.remove(path / file)
 
     def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
         """Return information about the page in the string format"""
