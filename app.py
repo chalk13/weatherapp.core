@@ -136,7 +136,8 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
-        weather_site = remaining_args[0]
+        if remaining_args:
+            weather_site = remaining_args[0]
 
         if command_name == 'clear-cache':
             self.clear_app_cache()
@@ -144,7 +145,7 @@ class App:
             self.write_info_to_csv(weather_site)
         elif not command_name:
             # run all weather providers by default
-            for name, provider in self.providermanager._providers.items():
+            for provider in self.providermanager._providers.values():
                 provider_obj = provider(self)
                 self.program_output(provider_obj.title,
                                     provider_obj.location,
