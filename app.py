@@ -1,5 +1,6 @@
 """Main module of the application"""
 
+import csv
 import html
 import os
 import sys
@@ -53,6 +54,46 @@ class App:
                 if life_time > config.DAY_IN_SECONDS:
                     os.remove(path / file)
 
+    def get_weather_info_to_save(self) -> dict:
+        """Return information from weather site to save"""
+
+        for name, provider in self.providermanager._providers.items():
+            provider_obj = provider(self)
+            if name == 'accu':
+                _, content = self.get_city_name_page_content()
+                weather_info = provider_obj.get_weather_accu(content)
+            if name == 'rp5':
+                _, content = self.get_city_name_page_content()
+                weather_info = provider_obj.get_weather_rp5(content)
+
+        return weather_info
+
+    def write_info_to_csv(self):
+        """Write data to a CSV file"""
+
+        info = self.get_weather_info_to_save()
+
+        output_file = open('weather_data.csv', 'w', newline='')
+        output_writer = csv.writer(output_file)
+        output_writer.writerow(['Parameters', 'Description'])
+        for key, value in info.items():
+            output_writer.writerow([key, value])
+        output_file.close()
+
+    def get_city_name_page_content(self, refresh: bool = False) -> tuple:
+        """Return name of the city and page content"""
+
+        for name, provider in self.providermanager._providers.items():
+            provider_obj = provider(self)
+            if name == 'accu':
+                city_name, city_url = provider_obj.get_configuration()
+                content = provider_obj.get_page_from_server(city_url, refresh=refresh)
+            if name == 'rp5':
+                city_name, city_url = provider_obj.get_configuration()
+                content = provider_obj.get_page_from_server(city_url, refresh=refresh)
+
+        return city_name, content
+
     def program_output(self, title: str, city: str, info: dict):
         """Print the application output in readable form"""
 
@@ -93,9 +134,13 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
+#        weather_site = remaining_args[0]
 
         if command_name == 'clear-cache':
             self.clear_app_cache()
+        elif command_name == 'save-to-csv':
+            self.write_info_to_csv()
+#            self.write_info_to_csv(weather_site)
         elif not command_name:
             # run all weather providers by default
             for name, provider in self.providermanager._providers.items():
