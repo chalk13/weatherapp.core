@@ -7,7 +7,6 @@ Providers: accuweather.com, rp5.ua
 import configparser
 import hashlib
 import os
-import shutil
 import time
 from pathlib import Path
 from urllib.request import urlopen, Request
@@ -101,12 +100,6 @@ class WeatherProvider:
                     cache = cache_file.read()
 
         return cache
-
-    def clear_app_cache(self):
-        """Delete directory with cache"""
-
-        cache_dir = self.get_cache_directory()
-        shutil.rmtree(cache_dir)
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache"""
