@@ -77,6 +77,9 @@ class App:
             self.program_output(provider_obj.title,
                                 provider_obj.location,
                                 provider_obj.run())
+        else:
+            print('Unknown command provided.')
+            sys.exit(1)
 
 
 def main(argv=sys.argv[1:]):
