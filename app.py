@@ -88,10 +88,10 @@ class App:
             provider = self.providermanager[weather_site]
             provider_obj = provider(self)
             if weather_site == 'accu':
-                city_name, city_url = provider_obj.get_configuration()
+                city_name, city_url = provider_obj.get_configuration(weather_site)
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
             if weather_site == 'rp5':
-                city_name, city_url = provider_obj.get_configuration()
+                city_name, city_url = provider_obj.get_configuration(weather_site)
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
 
         return city_name, content
