@@ -37,7 +37,7 @@ class WeatherProvider:
         """Write the location to the configfile"""
 
         parser = configparser.ConfigParser()
-        parser[command] = {'name': name, 'url': url}
+        parser[config.CONFIG_LOCATION] = {'name': name, 'url': url}
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
@@ -51,7 +51,7 @@ class WeatherProvider:
         parser.read(self.get_configuration_file())
 
         if config.CONFIG_LOCATION in parser.sections():
-            location_config = self.configuration[config.CONFIG_LOCATION]
+            location_config = parser[config.CONFIG_LOCATION]
             name, url = location_config['name'], location_config['url']
 
         return name, url
