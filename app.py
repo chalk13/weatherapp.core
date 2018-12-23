@@ -143,6 +143,10 @@ class App:
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
+        elif command_name == 'config':
+            provider = self.providermanager[weather_site]
+            provider_obj = provider(self)
+            provider_obj.configuration(weather_site)
         elif not command_name:
             # run all weather providers by default
             for provider in self.providermanager._providers.values():
