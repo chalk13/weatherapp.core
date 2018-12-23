@@ -20,10 +20,15 @@ class WeatherProvider:
 
     def __init__(self, app):
         self.app = app
-
-        location, url = self.get_configuration()
-        self.location = location
-        self.url = url
+        if self.app.options.command:
+            weather_site = self.app.options.command
+            location, url = self.get_configuration(weather_site)
+            self.location = location
+            self.url = url
+        else:
+            location, url = self.get_configuration()
+            self.location = location
+            self.url = url
 
     def get_configuration_file(self):
         """Path to the CONFIG_FILE.
@@ -37,11 +42,14 @@ class WeatherProvider:
         """Write the location to the configfile"""
 
         parser = configparser.ConfigParser()
-        parser[config.CONFIG_LOCATION] = {'name': name, 'url': url}
+        if command == 'accu':
+            parser[config.CONFIG_LOCATION_ACCU] = {'name': name, 'url': url}
+        elif command == 'rp5':
+            parser[config.CONFIG_LOCATION_RP5] = {'name': name, 'url': url}
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
-    def get_configuration(self) -> tuple:
+    def get_configuration(self, weather_site: str = None) -> tuple:
         """Returns name of the city and related url"""
 
         name = self.default_location
@@ -50,8 +58,12 @@ class WeatherProvider:
         parser = configparser.ConfigParser()
         parser.read(self.get_configuration_file())
 
-        if config.CONFIG_LOCATION in parser.sections():
-            location_config = parser[config.CONFIG_LOCATION]
+        if config.CONFIG_LOCATION_ACCU in parser.sections() and weather_site == 'accu':
+            location_config = parser[config.CONFIG_LOCATION_ACCU]
+            name, url = location_config['name'], location_config['url']
+
+        elif config.CONFIG_LOCATION_RP5 in parser.sections() and weather_site == 'rp5':
+            location_config = parser[config.CONFIG_LOCATION_RP5]
             name, url = location_config['name'], location_config['url']
 
         return name, url
