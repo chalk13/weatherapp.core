@@ -14,12 +14,25 @@ from providermanager import ProviderManager
 import config
 
 
+class Providers:
+    """Prints all available providers"""
+
+    def __init__(self):
+        self.providers = ProviderManager()
+
+    def all_providers(self):
+        print(f"Available providers:")
+        for number, provider in enumerate(self.providers._providers.values(), 1):
+            print(f'{number}. {provider.title}')
+
+
 class App:
     """Weather aggregator application"""
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
+        self.providers = Providers()
 
     def _arg_parse(self):
         """Initialize argument parser."""
@@ -139,7 +152,9 @@ class App:
         if remaining_args:
             weather_site = remaining_args[0]
 
-        if command_name == 'clear-cache':
+        if command_name == 'providers':
+            self.providers.all_providers()
+        elif command_name == 'clear-cache':
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
