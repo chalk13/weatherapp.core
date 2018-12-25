@@ -26,6 +26,19 @@ class Providers:
             print(f'{number}. {provider.title}')
 
 
+class Config:
+    """Customizes the location for the weather site."""
+
+    def __init__(self, weather_site):
+        self.weather_site = weather_site
+        self.providermanager = ProviderManager()
+
+    def customizes(self, weather_site: str):
+        provider = self.providermanager[weather_site]
+        provider_obj = provider(self)
+        provider_obj.configuration(weather_site)
+
+
 class App:
     """Weather aggregator application"""
 
@@ -101,10 +114,10 @@ class App:
             provider = self.providermanager[weather_site]
             provider_obj = provider(self)
             if weather_site == 'accu':
-                city_name, city_url = provider_obj.get_configuration(weather_site)
+                city_name, city_url = provider_obj.get_configuration()
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
             if weather_site == 'rp5':
-                city_name, city_url = provider_obj.get_configuration(weather_site)
+                city_name, city_url = provider_obj.get_configuration()
                 content = provider_obj.get_page_from_server(city_url, refresh=refresh)
 
         return city_name, content
@@ -159,9 +172,8 @@ class App:
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
         elif command_name == 'config':
-            provider = self.providermanager[weather_site]
-            provider_obj = provider(self)
-            provider_obj.configuration(weather_site)
+            site_configuration = Config(weather_site)
+            site_configuration.customizes(weather_site)
         elif not command_name:
             # run all weather providers by default
             for provider in self.providermanager._providers.values():
