@@ -33,14 +33,11 @@ class WeatherProvider:
 
         return Path.home() / config.CONFIG_FILE
 
-    def save_configuration(self, command: str, name: str, url: str):
+    def save_configuration(self, name: str, url: str):
         """Write the location to the configfile"""
 
         parser = configparser.ConfigParser()
-        if command == 'accu':
-            parser[config.CONFIG_LOCATION_ACCU] = {'name': name, 'url': url}
-        elif command == 'rp5':
-            parser[config.CONFIG_LOCATION_RP5] = {'name': name, 'url': url}
+        parser[f'{config.CONFIG_LOCATION} {self.name}'] = {'name': name, 'url': url}
         with open(self.get_configuration_file(), 'w') as configfile:
             parser.write(configfile)
 
@@ -53,11 +50,11 @@ class WeatherProvider:
         parser = configparser.ConfigParser()
         parser.read(self.get_configuration_file())
 
-        if parser.sections()[0] == config.CONFIG_LOCATION_ACCU and self.name == 'accu':
-            location_config = parser[config.CONFIG_LOCATION_ACCU]
+        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'accu':
+            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
             name, url = location_config['name'], location_config['url']
-        if parser.sections()[0] == config.CONFIG_LOCATION_RP5 and self.name == 'rp5':
-            location_config = parser[config.CONFIG_LOCATION_RP5]
+        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'rp5':
+            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
             name, url = location_config['name'], location_config['url']
 
         return name, url
@@ -157,7 +154,7 @@ class AccuWeatherProvider(WeatherProvider):
             location = locations[selected_index - 1]
             locations = self.get_locations_accu(location[1], refresh=refresh)
 
-        self.save_configuration(command, *location)
+        self.save_configuration(*location)
 
     def get_weather_accu(self, page: str, refresh: bool = False) -> dict:
         """Return information collected from AccuWeather"""
@@ -255,7 +252,7 @@ class Rp5WeatherProvider(WeatherProvider):
             location = locations[selected_index - 1]
             locations = self.get_locations_rp5(location[1], refresh=refresh)
 
-        self.save_configuration(command, *location)
+        self.save_configuration(*location)
 
     def get_weather_rp5(self, page: str) -> dict:
         """Return information collected from RP5"""
