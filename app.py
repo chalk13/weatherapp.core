@@ -34,6 +34,7 @@ class Config:
         self.providermanager = ProviderManager()
 
     def customizes(self, weather_site: str):
+        """Configure the location to display the weather"""
         provider = self.providermanager[weather_site]
         provider_obj = provider(self)
         provider_obj.configuration(weather_site)
