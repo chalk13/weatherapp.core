@@ -25,7 +25,8 @@ class WeatherProvider:
         self.location = location
         self.url = url
 
-    def get_configuration_file(self):
+    @staticmethod
+    def get_configuration_file():
         """Path to the CONFIG_FILE.
 
         Returns path to configuration file in your home directory.
@@ -59,22 +60,26 @@ class WeatherProvider:
 
         return name, url
 
-    def get_request_headers(self) -> dict:
+    @staticmethod
+    def get_request_headers() -> dict:
         """Return information for headers"""
 
         return {'User-Agent': config.FAKE_MOZILLA_AGENT}
 
-    def get_cache_directory(self):
+    @staticmethod
+    def get_cache_directory():
         """Return path to the cache directory"""
 
         return Path.home() / config.CACHE_DIR
 
-    def cache_is_valid(self, path) -> bool:
+    @staticmethod
+    def cache_is_valid(path) -> bool:
         """Check if current cache file is valid"""
 
         return (time.time() - path.stat().st_mtime) < config.CACHE_TIME
 
-    def get_url_hash(self, url: str) -> str:
+    @staticmethod
+    def get_url_hash(url: str) -> str:
         """Generates hash for given url"""
 
         return hashlib.md5(url.encode('utf-8')).hexdigest()
@@ -254,7 +259,8 @@ class Rp5WeatherProvider(WeatherProvider):
 
         self.save_configuration(*location)
 
-    def get_weather_rp5(self, page: str) -> dict:
+    @staticmethod
+    def get_weather_rp5(page: str) -> dict:
         """Return information collected from RP5"""
 
         weather_page = BeautifulSoup(page, 'html.parser')
