@@ -48,7 +48,8 @@ class App:
         self.providermanager = ProviderManager()
         self.providers = Providers()
 
-    def _arg_parse(self):
+    @staticmethod
+    def _arg_parse():
         """Initialize argument parser."""
         arg_parser = ArgumentParser(description='Application information',
                                     add_help=False)
@@ -58,7 +59,8 @@ class App:
 
         return arg_parser
 
-    def get_cache_directory(self):
+    @staticmethod
+    def get_cache_directory():
         """Return path to the cache directory."""
 
         return Path.home() / config.CACHE_DIR
@@ -123,7 +125,8 @@ class App:
 
         return city_name, content
 
-    def program_output(self, title: str, city: str, info: dict):
+    @staticmethod
+    def program_output(title: str, city: str, info: dict):
         """Print the application output in readable form."""
 
         length_column_1 = max(len(key) for key in info.keys())
