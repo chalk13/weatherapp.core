@@ -1,4 +1,4 @@
-"""Main module of the application"""
+"""Main module of the application."""
 
 import csv
 import html
@@ -10,17 +10,17 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from providermanager import ProviderManager
-
 import config
 
 
 class Providers:
-    """Prints all available providers"""
+    """Prints all available providers."""
 
     def __init__(self):
         self.providers = ProviderManager()
 
     def all_providers(self):
+        """Prints the number and the provider name."""
         print(f"Available providers:")
         for number, provider in enumerate(self.providers._providers.values(), 1):
             print(f'{number}. {provider.title}')
@@ -40,7 +40,7 @@ class Config:
 
 
 class App:
-    """Weather aggregator application"""
+    """Weather aggregator application."""
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
@@ -58,18 +58,18 @@ class App:
         return arg_parser
 
     def get_cache_directory(self):
-        """Return path to the cache directory"""
+        """Return path to the cache directory."""
 
         return Path.home() / config.CACHE_DIR
 
     def clear_app_cache(self):
-        """Delete directory with cache"""
+        """Delete directory with cache."""
 
         cache_dir = self.get_cache_directory()
         shutil.rmtree(cache_dir)
 
     def delete_invalid_cache(self):
-        """Delete all invalid (old) cache"""
+        """Delete all invalid (old) cache."""
 
         cache_dir = self.get_cache_directory()
         if cache_dir.exists():
@@ -81,7 +81,7 @@ class App:
                     os.remove(path / file)
 
     def get_weather_info_to_save(self, weather_site: str) -> dict:
-        """Return information from weather site to save"""
+        """Return information from weather site to save."""
 
         if weather_site in self.providermanager:
             provider = self.providermanager[weather_site]
@@ -96,7 +96,7 @@ class App:
         return weather_info
 
     def write_info_to_csv(self, weather_site: str):
-        """Write data to a CSV file"""
+        """Write data to a CSV file."""
 
         info = self.get_weather_info_to_save(weather_site)
 
@@ -108,7 +108,7 @@ class App:
                 writer.writerow({'Parameters': key, 'Description': value})
 
     def get_city_name_page_content(self, weather_site: str, refresh: bool = False) -> tuple:
-        """Return name of the city and page content"""
+        """Return name of the city and page content."""
 
         if weather_site in self.providermanager:
             provider = self.providermanager[weather_site]
@@ -123,7 +123,7 @@ class App:
         return city_name, content
 
     def program_output(self, title: str, city: str, info: dict):
-        """Print the application output in readable form"""
+        """Print the application output in readable form."""
 
         length_column_1 = max(len(key) for key in info.keys())
         length_column_2 = max(len(value) for value in info.values())
@@ -133,13 +133,13 @@ class App:
         print(f'{city.upper()}')
 
         def border_line(column_1: int, column_2: int) -> str:
-            """Print a line for dividing information"""
+            """Print a line for dividing information."""
 
             line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
             return line
 
         def status_msg(msg: str, state: str) -> str:
-            """Print weather information"""
+            """Print weather information."""
 
             result = f"| {msg} {' ' * (length_column_1 - len(msg))}" \
                      f"| {state} {' ' * (length_column_2 - len(state))}|\n"
@@ -153,7 +153,7 @@ class App:
         print(border_line(length_column_1, length_column_2))
 
     def run(self, argv):
-        """Run application
+        """Run application.
 
         :param argv: list of passed arguments
         """
@@ -194,7 +194,7 @@ class App:
 
 
 def main(argv=sys.argv[1:]):
-    """Main entry point"""
+    """Main entry point."""
 
     return App().run(argv)
 
