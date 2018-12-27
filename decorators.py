@@ -28,8 +28,24 @@ def slow_down(seconds=1):
 
 @slow_down(seconds=3)
 def hello(name):
-    """Test function"""
+    """Hello test function."""
     print(f'Hello {name}')
 
 
-hello('Peter')
+def timer(func):
+    """Finds function execution time."""
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()  # performance counter
+        result = func(*args, **kwargs)
+        run_time = time.perf_counter() - start_time
+        print(f'Function ({func.__name__!r}) execution time '
+              f'is {run_time:.4f} seconds.')
+        return result
+
+    return wrapper
+
+
+@timer
+def sleep(sec):
+    """Sleep test function."""
+    time.sleep(sec)
