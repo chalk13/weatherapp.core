@@ -51,4 +51,23 @@ def sleep(sec):
     time.sleep(sec)
 
 
+def get_arguments(func):
+    """Prints all arguments passed to the function."""
+    def wrapper(*args, **kwargs):
+        for arg in args:
+            print(arg)
+        for key, value in kwargs.items():
+            print(f'The value of {key} is {value}')
+        return func(*args, **kwargs)
 
+    return wrapper
+
+
+@get_arguments
+def print_arguments(first, second, third):
+    """Print arguments test function"""
+    print(first + second)
+    print(third)
+
+
+print_arguments(5, 6, third=97)
