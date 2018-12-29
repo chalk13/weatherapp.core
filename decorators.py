@@ -65,9 +65,32 @@ def get_arguments(func):
 
 @get_arguments
 def print_arguments(first, second, third):
-    """Print arguments test function"""
+    """Print arguments test function."""
     print(first + second)
     print(third)
 
 
 print_arguments(5, 6, third=97)
+
+
+def func_calls_counter(func):
+    """Counts how many times a function is called."""
+    def wrapper(*args, **kwargs):
+        wrapper.counter += 1
+        return func(*args, **kwargs)
+
+    wrapper.counter = 0
+    return wrapper
+
+
+@func_calls_counter
+def print_anything():
+    """Print_anything test function."""
+    print("Enter text to print here")
+
+
+print_anything()
+for item in range(3):
+    print_anything()
+
+print(print_anything.counter)
