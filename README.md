@@ -1,11 +1,11 @@
-### CONVENIENT PRESENTATION OF INFORMATION FROM VARIOUS WEATHER WEBSITES
+## CONVENIENT PRESENTATION OF INFORMATION FROM VARIOUS WEATHER WEBSITES
 
 ---
-##### MAIN PURPOSE
+### MAIN PURPOSE
 > The main purpose of this project is to obtain real knowledge and practice of solving real problem.
-##### IDEA
+### IDEA
 > Combine and present information from different weather websites in one place and be able to view and compare them.
-#####GOALS:
+### GOALS:
 1. Collect information from different weather websites.
 2. A simple interface to use the program. 
 3. Adding a new resource, feature will not change the implementation of the main functionality.
@@ -15,4 +15,4 @@
 *TOOLS:* Python3, ...
 
 ---
-##### Commands for the weather application:
+### Commands for the weather application:
