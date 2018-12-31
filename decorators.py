@@ -1,6 +1,7 @@
 """Decorators for the weather application."""
 
 import time
+from functools import lru_cache
 
 
 def slow_down_one_second(func):
@@ -94,3 +95,18 @@ for item in range(3):
     print_anything()
 
 print(print_anything.counter)
+
+
+# did not write my own decorator for caching
+# just used the implementation from the standard library
+@lru_cache(maxsize=256)
+def fibonacci(n):
+    """Return n-th Fibonacci number."""
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fibonacci(n-1) + fibonacci(n-2)
+
+
+print(f'The n-th Fibonacci number: {fibonacci(42)}')
