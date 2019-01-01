@@ -1,5 +1,4 @@
-## CONVENIENT PRESENTATION OF INFORMATION FROM VARIOUS WEATHER WEBSITES
-***
+# CONVENIENT PRESENTATION OF INFORMATION FROM VARIOUS WEATHER WEBSITES
 ### MAIN PURPOSE
 > The main purpose of this project is to obtain real knowledge and practice of solving real problem.
 ### IDEA
