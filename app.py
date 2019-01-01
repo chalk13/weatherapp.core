@@ -21,9 +21,9 @@ class Providers:
 
     def all_providers(self):
         """Prints the number and the provider name."""
-        print(f"Available providers:")
+        print(f"Available providers (provider id):")
         for number, provider in enumerate(self.providers._providers.values(), 1):
-            print(f'{number}. {provider.title}')
+            print(f'{number}. {provider.title} ({provider.name})')
 
 
 class Config:
