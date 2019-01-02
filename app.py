@@ -89,12 +89,8 @@ class App:
         if weather_site in self.providermanager:
             provider = self.providermanager[weather_site]
             provider_obj = provider(self)
-            if weather_site == 'accu':
-                _, content = self.get_city_name_page_content(weather_site)
-                weather_info = provider_obj.get_weather_accu(content)
-            if weather_site == 'rp5':
-                _, content = self.get_city_name_page_content(weather_site)
-                weather_info = provider_obj.get_weather_rp5(content)
+            _, content = self.get_city_name_page_content(weather_site)
+            weather_info = provider_obj.get_weather_info(content)
 
         return weather_info
 
