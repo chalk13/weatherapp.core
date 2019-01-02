@@ -58,7 +58,7 @@ class WeatherProvider(Command):
         """Default location url"""
 
     @abc.abstractmethod
-    def configurate(self):
+    def configuration(self):
         """Performs provider configuration."""
 
     @abc.abstractmethod
@@ -171,3 +171,8 @@ class WeatherProvider(Command):
             self.save_cache(page_url, page)
 
         return page.decode('utf-8')
+
+    def run(self, refresh=False):
+        """Main run for provider"""
+        content = self.get_page_from_server(self.url, refresh=refresh)
+        return self.get_weather_info(content)
