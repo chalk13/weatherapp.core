@@ -54,7 +54,7 @@ class AccuWeatherProvider(WeatherProvider):
 
         self.save_configuration(*location)
 
-    def get_weather_accu(self, page: str, refresh: bool = False) -> dict:
+    def get_weather_info(self, page: str, refresh: bool = False) -> dict:
         """Return information collected from AccuWeather"""
 
         weather_page = BeautifulSoup(page, 'html.parser')
@@ -85,11 +85,6 @@ class AccuWeatherProvider(WeatherProvider):
                         weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
 
         return weather_info
-
-    def run(self, refresh=False):
-        """Main run for provider"""
-        content = self.get_page_from_server(self.url, refresh=refresh)
-        return self.get_weather_accu(content, refresh=refresh)
 
 
 class Rp5WeatherProvider(WeatherProvider):
@@ -158,7 +153,7 @@ class Rp5WeatherProvider(WeatherProvider):
         self.save_configuration(*location)
 
     @staticmethod
-    def get_weather_rp5(page: str) -> dict:
+    def get_weather_info(page: str) -> dict:
         """Return information collected from RP5"""
 
         weather_page = BeautifulSoup(page, 'html.parser')
@@ -186,8 +181,3 @@ class Rp5WeatherProvider(WeatherProvider):
                 weather_info['Wind'] = first_sentence[start:]
 
         return weather_info
-
-    def run(self, refresh=False):
-        """Main run for provider"""
-        content = self.get_page_from_server(self.url, refresh=refresh)
-        return self.get_weather_rp5(content)
