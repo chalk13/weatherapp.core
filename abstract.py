@@ -2,6 +2,13 @@
 
 import abc
 import argparse
+import configparser
+import hashlib
+import time
+from pathlib import Path
+from urllib.request import urlopen, Request
+
+import config
 
 
 class Command(abc.ABC):
@@ -35,6 +42,21 @@ class WeatherProvider(Command):
     Defines behavior for all weather providers.
     """
 
+    def __init__(self, app):
+        super().__init__(app)
+
+        location, url = self.get_configuration()
+        self.location = location
+        self.url = url
+
+    @abc.abstractmethod
+    def get_default_location(self):
+        """Default location name"""
+
+    @abc.abstractmethod
+    def get_default_url(self):
+        """Default location url"""
+
     @abc.abstractmethod
     def configurate(self):
         """Performs provider configuration."""
@@ -53,3 +75,99 @@ class WeatherProvider(Command):
             wind_info: ''  # information about wind
         }
         """
+
+    @staticmethod
+    def get_configuration_file():
+        """Path to the CONFIG_FILE.
+
+        Returns path to configuration file in your home directory.
+        """
+
+        return Path.home() / config.CONFIG_FILE
+
+    def save_configuration(self, name: str, url: str):
+        """Write the location to the configfile"""
+
+        parser = configparser.ConfigParser()
+        parser[f'{config.CONFIG_LOCATION} {self.name}'] = {'name': name, 'url': url}
+        with open(self.get_configuration_file(), 'w') as configfile:
+            parser.write(configfile)
+
+    def get_configuration(self) -> tuple:
+        """Returns name of the city and related url"""
+
+        name = self.get_default_location()
+        url = self.get_default_url()
+
+        parser = configparser.ConfigParser()
+        parser.read(self.get_configuration_file())
+
+        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'accu':
+            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
+            name, url = location_config['name'], location_config['url']
+        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'rp5':
+            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
+            name, url = location_config['name'], location_config['url']
+
+        return name, url
+
+    @staticmethod
+    def get_request_headers() -> dict:
+        """Return information for headers"""
+
+        return {'User-Agent': config.FAKE_MOZILLA_AGENT}
+
+    @staticmethod
+    def get_cache_directory():
+        """Return path to the cache directory"""
+
+        return Path.home() / config.CACHE_DIR
+
+    @staticmethod
+    def cache_is_valid(path) -> bool:
+        """Check if current cache file is valid"""
+
+        return (time.time() - path.stat().st_mtime) < config.CACHE_TIME
+
+    @staticmethod
+    def get_url_hash(url: str) -> str:
+        """Generates hash for given url"""
+
+        return hashlib.md5(url.encode('utf-8')).hexdigest()
+
+    def save_cache(self, url: str, page_source: str):
+        """Save page source data to file"""
+
+        url_hash = self.get_url_hash(url)
+        cache_dir = self.get_cache_directory()
+        if not cache_dir.exists():
+            cache_dir.mkdir(parents=True)
+        with (cache_dir / url_hash).open('wb') as cache_file:
+            cache_file.write(page_source)
+
+    def get_cache(self, url: str):
+        """Return cache data if any exists"""
+
+        cache = b''
+        url_hash = self.get_url_hash(url)
+        cache_dir = self.get_cache_directory()
+        if cache_dir.exists():
+            cache_path = cache_dir / url_hash
+            if cache_path.exists() and self.cache_is_valid(cache_path):
+                with cache_path.open('rb') as cache_file:
+                    cache = cache_file.read()
+
+        return cache
+
+    def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
+        """Return information about the page in the string format"""
+
+        cache = self.get_cache(page_url)
+        if cache and not refresh:
+            page = cache
+        else:
+            request = Request(page_url, headers=self.get_request_headers())
+            page = urlopen(request).read()
+            self.save_cache(page_url, page)
+
+        return page.decode('utf-8')
