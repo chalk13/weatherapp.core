@@ -7,6 +7,7 @@ Providers: accuweather.com, rp5.ua
 from bs4 import BeautifulSoup
 
 import config
+from abstract import WeatherProvider
 
 
 class AccuWeatherProvider(WeatherProvider):
@@ -17,8 +18,13 @@ class AccuWeatherProvider(WeatherProvider):
     name = config.ACCU_PROVIDER_NAME
     title = config.ACCU_PROVIDER_TITLE
 
-    default_location = config.DEFAULT_NAME
-    default_url = config.DEFAULT_URL_ACCU
+    def get_default_location(self):
+        """Default location name"""
+        return config.DEFAULT_NAME
+
+    def get_default_url(self):
+        """Default location url"""
+        return config.DEFAULT_URL_ACCU
 
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
@@ -94,8 +100,13 @@ class Rp5WeatherProvider(WeatherProvider):
     name = config.RP5_PROVIDER_NAME
     title = config.RP5_PROVIDER_TITLE
 
-    default_location = config.DEFAULT_NAME
-    default_url = config.DEFAULT_URL_RP5
+    def get_default_location(self):
+        """Default location name"""
+        return config.DEFAULT_NAME
+
+    def get_default_url(self):
+        """Default location url"""
+        return config.DEFAULT_URL_RP5
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
         """Return a list of locations and related urls"""
