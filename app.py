@@ -181,17 +181,15 @@ class App:
         elif not command_name:
             # run all weather providers by default
             for provider in self.providermanager._providers.values():
-                provider_obj = provider(self)
-                self.program_output(provider_obj.title,
-                                    provider_obj.location,
-                                    provider_obj.run())
+                self.program_output(provider.title,
+                                    provider(self).location,
+                                    provider(self).run(remaining_args))
         elif command_name in self.providermanager:
             # run specific provider
             provider = self.providermanager[command_name]
-            provider_obj = provider(self)
-            self.program_output(provider_obj.title,
-                                provider_obj.location,
-                                provider_obj.run())
+            self.program_output(provider.title,
+                                provider(self).location,
+                                provider(self).run(remaining_args))
         else:
             print('Unknown command provided.')
             sys.exit(1)
