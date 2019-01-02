@@ -228,7 +228,7 @@ class Rp5WeatherProvider(WeatherProvider):
                     url = f'http://rp5.ua/{url}'
                     location = place.text
                     locations.append((location, url))
-                    return locations
+                return locations
             for place in places:
                 url = place.attrs['href']
                 url = f'http://rp5.ua/{url}'
