@@ -27,3 +27,29 @@ class Command(abc.ABC):
 
         Should be overridden in subclass.
         """
+
+
+class WeatherProvider(Command):
+    """Weather provider abstract class.
+
+    Defines behavior for all weather providers.
+    """
+
+    @abc.abstractmethod
+    def configurate(self):
+        """Performs provider configuration."""
+
+    @abc.abstractmethod
+    def get_weather_info(self, content):
+        """Collects weather information.
+
+        Gets weather information from source and produce it in
+        the following format.
+
+        weather_info = {
+            temp: ''  # temperature
+            condition: ''  # weather condition
+            feel_temp: ''  # feels like temperature
+            wind_info: ''  # information about wind
+        }
+        """
