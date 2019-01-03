@@ -10,34 +10,8 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from providermanager import ProviderManager
+from commandmanager import CommandManager
 import config
-
-
-class Providers:
-    """Prints all available providers."""
-
-    def __init__(self):
-        self.providers = ProviderManager()
-
-    def all_providers(self):
-        """Prints the number and the provider name."""
-        print(f"Available providers (provider id):")
-        for number, provider in enumerate(self.providers._providers.values(), 1):
-            print(f'{number}. {provider.title} ({provider.name})')
-
-
-class Config:
-    """Customizes the location for the weather site."""
-
-    def __init__(self, weather_site):
-        self.weather_site = weather_site
-        self.providermanager = ProviderManager()
-
-    def customizes(self, weather_site: str):
-        """Configure the location to display the weather"""
-        provider = self.providermanager[weather_site]
-        provider_obj = provider(self)
-        provider_obj.configuration(weather_site)
 
 
 class App:
@@ -46,7 +20,7 @@ class App:
     def __init__(self):
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
-        self.providers = Providers()
+        self.commandmanager = CommandManager()
 
     @staticmethod
     def _arg_parse():
@@ -165,15 +139,16 @@ class App:
         if remaining_args:
             weather_site = remaining_args[0]
 
-        if command_name == 'providers':
-            self.providers.all_providers()
-        elif command_name == 'clear-cache':
+        # TODO: print message if clear-cache called and folder is empty
+        if command_name == 'clear-cache':
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
-        elif command_name == 'config':
-            site_configuration = Config(weather_site)
-            site_configuration.customizes(weather_site)
+
+        elif command_name in self.commandmanager:
+            command_factory = self.commandmanager.get(command_name)
+            return command_factory(self).run(remaining_args)
+
         elif not command_name:
             # run all weather providers by default
             for provider in self.providermanager._providers.values():
