@@ -24,7 +24,7 @@ class ProviderManager:
     def get(self, name):
         """Get provider by name."""
 
-        return self._providers.get([name], None)
+        return self._providers.get(name, None)
 
     def __len__(self):
         return len(self._providers)
