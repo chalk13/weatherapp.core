@@ -6,7 +6,7 @@ import configparser
 import hashlib
 import time
 from pathlib import Path
-from urllib.request import urlopen, Request
+import requests
 
 import config
 
@@ -164,13 +164,13 @@ class WeatherProvider(Command):
 
         cache = self.get_cache(page_url)
         if cache and not refresh:
-            page = cache
+            page_source = cache
         else:
-            request = Request(page_url, headers=self.get_request_headers())
-            page = urlopen(request).read()
-            self.save_cache(page_url, page)
+            page = requests.get(page_url, headers=self.get_request_headers())
+            page_source = page.content
+            self.save_cache(page_url, page_source)
 
-        return page.decode('utf-8')
+        return page_source.decode('utf-8')
 
     def run(self, refresh=False):
         """Main run for provider"""
