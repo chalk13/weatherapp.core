@@ -15,7 +15,6 @@ BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world'}
 
 CONFIG_FILE = 'weatherapp.ini'
-CONFIG_LOCATION = 'Location'
 CACHE_DIR = '.weatherappcache'
 CACHE_TIME = 900
 DAY_IN_SECONDS = 86400
