@@ -77,6 +77,10 @@ class WeatherProvider(Command):
         }
         """
 
+    def get_name(self):
+        """Return provider name."""
+        return self.name
+
     @staticmethod
     def get_configuration_file():
         """Path to the CONFIG_FILE.
@@ -90,8 +94,13 @@ class WeatherProvider(Command):
         """Write the location to the configfile"""
 
         parser = configparser.ConfigParser()
-        parser[f'{config.CONFIG_LOCATION} {self.name}'] = {'name': name, 'url': url}
-        with open(self.get_configuration_file(), 'w') as configfile:
+        config_file = self.get_configuration_file()
+
+        if config_file.exists():
+            parser.read(config_file)
+
+        parser[self.get_name()] = {'name': name, 'url': url}
+        with open(config_file, 'w') as configfile:
             parser.write(configfile)
 
     def get_configuration(self) -> tuple:
@@ -101,13 +110,15 @@ class WeatherProvider(Command):
         url = self.get_default_url()
 
         parser = configparser.ConfigParser()
-        parser.read(self.get_configuration_file())
 
-        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'accu':
-            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
-            name, url = location_config['name'], location_config['url']
-        if f'{config.CONFIG_LOCATION} {self.name}' == parser.sections()[0] and self.name == 'rp5':
-            location_config = parser[f'{config.CONFIG_LOCATION} {self.name}']
+        try:
+            parser.read(self.get_configuration_file())
+        except configparser.Error:
+            print(f'Bad configuration file. '
+                  f'Please change configuration for provider: {self.get_name()}')
+
+        if self.get_name() in parser.sections():
+            location_config = parser[self.get_name()]
             name, url = location_config['name'], location_config['url']
 
         return name, url
