@@ -19,15 +19,15 @@ class AccuWeatherProvider(WeatherProvider):
     title = config.ACCU_PROVIDER_TITLE
 
     def get_default_location(self):
-        """Default location name"""
+        """Default location name."""
         return config.DEFAULT_NAME
 
     def get_default_url(self):
-        """Default location url"""
+        """Default location url."""
         return config.DEFAULT_URL_ACCU
 
     def get_locations_accu(self, locations_url: str, refresh: bool = False) -> list:
-        """Return a list of locations and related urls"""
+        """Return a list of locations and related urls."""
 
         locations_page = self.get_page_from_server(locations_url, refresh=refresh)
         soup = BeautifulSoup(locations_page, 'html.parser')
@@ -40,7 +40,7 @@ class AccuWeatherProvider(WeatherProvider):
         return locations
 
     def configuration(self, command: str, refresh: bool = False):
-        """Set the location for which to display the weather"""
+        """Set the location for which to display the weather."""
 
         locations = self.get_locations_accu(config.BROWSE_LOCATIONS[command],
                                             refresh=refresh)
@@ -55,7 +55,7 @@ class AccuWeatherProvider(WeatherProvider):
         self.save_configuration(*location)
 
     def get_weather_info(self, page: str, refresh: bool = False) -> dict:
-        """Return information collected from AccuWeather"""
+        """Return information collected from AccuWeather."""
 
         weather_page = BeautifulSoup(page, 'html.parser')
         current_day_selection = weather_page.find('li', {'class': ['day current first cl',
@@ -96,15 +96,15 @@ class Rp5WeatherProvider(WeatherProvider):
     title = config.RP5_PROVIDER_TITLE
 
     def get_default_location(self):
-        """Default location name"""
+        """Default location name."""
         return config.DEFAULT_NAME
 
     def get_default_url(self):
-        """Default location url"""
+        """Default location url."""
         return config.DEFAULT_URL_RP5
 
     def get_locations_rp5(self, locations_url: str, refresh: bool = False) -> list:
-        """Return a list of locations and related urls"""
+        """Return a list of locations and related urls."""
 
         locations_page = self.get_page_from_server(locations_url, refresh=refresh)
         soup = BeautifulSoup(locations_page, 'html.parser')
@@ -138,7 +138,7 @@ class Rp5WeatherProvider(WeatherProvider):
         return locations
 
     def configuration(self, command: str, refresh: bool = False):
-        """Set the location for which to display the weather"""
+        """Set the location for which to display the weather."""
 
         locations = self.get_locations_rp5(config.BROWSE_LOCATIONS[command],
                                            refresh=refresh)
@@ -154,7 +154,7 @@ class Rp5WeatherProvider(WeatherProvider):
 
     @staticmethod
     def get_weather_info(page: str) -> dict:
-        """Return information collected from RP5"""
+        """Return information collected from RP5."""
 
         weather_page = BeautifulSoup(page, 'html.parser')
         current_day_temperature = weather_page.find('div', class_='ArchiveTemp')
