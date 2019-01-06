@@ -52,18 +52,18 @@ class WeatherProvider(Command):
 
     @abc.abstractmethod
     def get_default_location(self):
-        """Default location name"""
+        """Default location name."""
 
     @abc.abstractmethod
     def get_default_url(self):
-        """Default location url"""
+        """Default location url."""
 
     @abc.abstractmethod
     def configuration(self):
         """Performs provider configuration."""
 
     @abc.abstractmethod
-    def get_weather_info(self, content):
+    def get_weather_info(self, content: str):
         """Collects weather information.
 
         Gets weather information from source and produce it in
@@ -91,7 +91,7 @@ class WeatherProvider(Command):
         return Path.home() / config.CONFIG_FILE
 
     def save_configuration(self, name: str, url: str):
-        """Write the location to the configfile"""
+        """Write the location to the configfile."""
 
         parser = configparser.ConfigParser()
         config_file = self.get_configuration_file()
@@ -104,7 +104,7 @@ class WeatherProvider(Command):
             parser.write(configfile)
 
     def get_configuration(self) -> tuple:
-        """Returns name of the city and related url"""
+        """Returns name of the city and related url."""
 
         name = self.get_default_location()
         url = self.get_default_url()
@@ -125,30 +125,30 @@ class WeatherProvider(Command):
 
     @staticmethod
     def get_request_headers() -> dict:
-        """Return information for headers"""
+        """Return information for headers."""
 
         return {'User-Agent': config.FAKE_MOZILLA_AGENT}
 
     @staticmethod
     def get_cache_directory():
-        """Return path to the cache directory"""
+        """Return path to the cache directory."""
 
         return Path.home() / config.CACHE_DIR
 
     @staticmethod
     def cache_is_valid(path) -> bool:
-        """Check if current cache file is valid"""
+        """Check if current cache file is valid."""
 
         return (time.time() - path.stat().st_mtime) < config.CACHE_TIME
 
     @staticmethod
     def get_url_hash(url: str) -> str:
-        """Generates hash for given url"""
+        """Generates hash for given url."""
 
         return hashlib.md5(url.encode('utf-8')).hexdigest()
 
     def save_cache(self, url: str, page_source: str):
-        """Save page source data to file"""
+        """Save page source data to file."""
 
         url_hash = self.get_url_hash(url)
         cache_dir = self.get_cache_directory()
@@ -157,8 +157,8 @@ class WeatherProvider(Command):
         with (cache_dir / url_hash).open('wb') as cache_file:
             cache_file.write(page_source)
 
-    def get_cache(self, url: str):
-        """Return cache data if any exists"""
+    def get_cache(self, url: str) -> bytes:
+        """Return cache data if any exists."""
 
         cache = b''
         url_hash = self.get_url_hash(url)
@@ -172,7 +172,7 @@ class WeatherProvider(Command):
         return cache
 
     def get_page_from_server(self, page_url: str, refresh: bool = False) -> str:
-        """Return information about the page in the string format"""
+        """Return information about the page in the string format."""
 
         cache = self.get_cache(page_url)
         if cache and not refresh:
@@ -185,6 +185,6 @@ class WeatherProvider(Command):
         return page_source.decode('utf-8')
 
     def run(self, refresh=False):
-        """Main run for provider"""
+        """Main run for provider."""
         content = self.get_page_from_server(self.url, refresh=refresh)
         return self.get_weather_info(content)
