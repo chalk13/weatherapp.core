@@ -43,7 +43,11 @@ class App:
         """Delete directory with cache."""
 
         cache_dir = self.get_cache_directory()
-        shutil.rmtree(cache_dir)
+
+        try:
+            shutil.rmtree(cache_dir)
+        except FileNotFoundError:
+            print('The cache directory is empty or not found.')
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache."""
@@ -139,7 +143,6 @@ class App:
         if remaining_args:
             weather_site = remaining_args[0]
 
-        # TODO: print message if clear-cache called and folder is empty
         if command_name == 'clear-cache':
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
