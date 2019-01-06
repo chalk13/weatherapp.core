@@ -107,7 +107,7 @@ class WeatherProvider(Command):
     def get_configuration(self):
         """Returns name of the city and related url."""
 
-        Place = namedtuple('Place', 'name url')
+        Place = namedtuple('Place', 'place_name place_url')
 
         try:
             name = self.get_default_location()
