@@ -50,7 +50,11 @@ class App:
             print('The cache directory is empty or not found.')
 
     def delete_invalid_cache(self):
-        """Delete all invalid (old) cache."""
+        """Delete all invalid (old) cache.
+
+        The time during which the cache is valid
+        can be changed in config.py
+        """
 
         cache_dir = self.get_cache_directory()
         if cache_dir.exists():
