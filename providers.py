@@ -47,7 +47,10 @@ class AccuWeatherProvider(WeatherProvider):
 
         while locations:
             for index, location in enumerate(locations):
-                print(f'{index + 1}) {location[0]}')
+                if index % 5 == 0:
+                    print()
+                print(f'{index + 1}) {location[0]}', end=' ')
+            print()
             selected_index = int(input('Please select location: '))
             location = locations[selected_index - 1]
             locations = self.get_locations_accu(location[1], refresh=refresh)
@@ -145,7 +148,10 @@ class Rp5WeatherProvider(WeatherProvider):
 
         while locations:
             for index, location in enumerate(locations):
-                print(f'{index + 1}) {location[0]}')
+                if index % 5 == 0:
+                    print()
+                print(f'{index + 1}) {location[0]}', end=' ')
+            print()
             selected_index = int(input('Please select location: '))
             location = locations[selected_index - 1]
             locations = self.get_locations_rp5(location[1], refresh=refresh)
