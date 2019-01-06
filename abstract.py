@@ -5,6 +5,7 @@ import argparse
 import configparser
 import hashlib
 import time
+from collections import namedtuple
 from pathlib import Path
 
 import requests
@@ -103,11 +104,17 @@ class WeatherProvider(Command):
         with open(config_file, 'w') as configfile:
             parser.write(configfile)
 
-    def get_configuration(self) -> tuple:
+    def get_configuration(self):
         """Returns name of the city and related url."""
 
-        name = self.get_default_location()
-        url = self.get_default_url()
+        Place = namedtuple('Place', 'name url')
+
+        try:
+            name = self.get_default_location()
+            url = self.get_default_url()
+            place_info = Place(name, url)
+        except AttributeError:
+            print('Check the default variables in the config file.')
 
         parser = configparser.ConfigParser()
 
@@ -120,8 +127,9 @@ class WeatherProvider(Command):
         if self.get_name() in parser.sections():
             location_config = parser[self.get_name()]
             name, url = location_config['name'], location_config['url']
+            place_info = Place(name, url)
 
-        return name, url
+        return place_info
 
     @staticmethod
     def get_request_headers() -> dict:
