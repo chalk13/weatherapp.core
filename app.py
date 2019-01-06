@@ -7,6 +7,7 @@ import sys
 import shutil
 import time
 from argparse import ArgumentParser
+from collections import namedtuple
 from pathlib import Path
 
 from providermanager import ProviderManager
@@ -88,20 +89,19 @@ class App:
             for key, value in info.items():
                 writer.writerow({'Parameters': key, 'Description': value})
 
-    def get_city_name_page_content(self, weather_site: str, refresh: bool = False) -> tuple:
+    def get_city_name_page_content(self, weather_site: str, refresh: bool = False):
         """Return name of the city and page content."""
+
+        PlaceInfo = namedtuple('PlaceInfo', 'place_name page_content')
 
         if weather_site in self.providermanager:
             provider = self.providermanager[weather_site]
             provider_obj = provider(self)
-            if weather_site == 'accu':
-                city_name, city_url = provider_obj.get_configuration()
-                content = provider_obj.get_page_from_server(city_url, refresh=refresh)
-            if weather_site == 'rp5':
-                city_name, city_url = provider_obj.get_configuration()
-                content = provider_obj.get_page_from_server(city_url, refresh=refresh)
+            city_name, city_url = provider_obj.get_configuration()
+            content = provider_obj.get_page_from_server(city_url, refresh=refresh)
+            place_info = PlaceInfo(city_name, content)
 
-        return city_name, content
+        return place_info
 
     @staticmethod
     def program_output(title: str, city: str, info: dict):
