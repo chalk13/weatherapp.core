@@ -57,15 +57,17 @@ class AccuWeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_accu(location[1], refresh=refresh)
             except IndexError:
-                print('The user entered too big number.\n'
-                      'Please use an integer number from the list below.')
                 if self.app.options.debug:
                     print('\n', traceback.format_exc())
+                else:
+                    print('The user entered too big number.\n'
+                          'Please use an integer number from the list below.')
             except ValueError:
-                print('The user did not enter an integer number.\n'
-                      'Please use an integer number from the list below.')
                 if self.app.options.debug:
                     print('\n', traceback.format_exc())
+                else:
+                    print('The user did not enter an integer number.\n'
+                          'Please use an integer number from the list below.')
 
         self.save_configuration(*location)
 
@@ -169,15 +171,17 @@ class Rp5WeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_rp5(location[1], refresh=refresh)
             except IndexError:
-                print('The user entered too big number.\n'
-                      'Please use an integer number from the list below.')
                 if self.app.options.debug:
                     print('\n', traceback.format_exc())
+                else:
+                    print('The user entered too big number.\n'
+                          'Please use an integer number from the list below.')
             except ValueError:
-                print('The user did not enter an integer number.\n'
-                      'Please use an integer number from the list below.')
                 if self.app.options.debug:
                     print('\n', traceback.format_exc())
+                else:
+                    print('The user did not enter an integer number.\n'
+                          'Please use an integer number from the list below.')
 
         self.save_configuration(*location)
 
