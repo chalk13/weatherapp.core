@@ -1,6 +1,7 @@
 """Manager to view registered providers and download them."""
 
 from providers import AccuWeatherProvider, Rp5WeatherProvider
+from providers import SinoptikWeatherProvider
 
 
 class ProviderManager:
@@ -13,7 +14,9 @@ class ProviderManager:
     def _load_providers(self):
         """Load all existing providers."""
 
-        for provider in [AccuWeatherProvider, Rp5WeatherProvider]:
+        for provider in [AccuWeatherProvider,
+                         Rp5WeatherProvider,
+                         SinoptikWeatherProvider]:
             self.add(provider.name, provider)
 
     def add(self, name, provider):
