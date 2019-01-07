@@ -7,6 +7,7 @@ Providers: accuweather.com, rp5.ua
 from bs4 import BeautifulSoup
 
 import config
+import traceback
 from abstract import WeatherProvider
 
 
@@ -58,9 +59,13 @@ class AccuWeatherProvider(WeatherProvider):
             except IndexError:
                 print('The user entered too big number.\n'
                       'Please use an integer number from the list below.')
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
             except ValueError:
                 print('The user did not enter an integer number.\n'
                       'Please use an integer number from the list below.')
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
 
         self.save_configuration(*location)
 
@@ -166,9 +171,13 @@ class Rp5WeatherProvider(WeatherProvider):
             except IndexError:
                 print('The user entered too big number.\n'
                       'Please use an integer number from the list below.')
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
             except ValueError:
                 print('The user did not enter an integer number.\n'
                       'Please use an integer number from the list below.')
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
 
         self.save_configuration(*location)
 
