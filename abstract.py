@@ -126,7 +126,7 @@ class WeatherProvider(Command):
         except configparser.Error:
             print(f'Bad configuration file. '
                   f'Please change configuration for provider: {self.get_name()}')
-            if self.app.options.degub:
+            if self.app.options.debug:
                 print('\n', traceback.format_exc())
 
         if self.get_name() in parser.sections():
