@@ -115,19 +115,22 @@ class WeatherProvider(Command):
             url = self.get_default_url()
             place_info = Place(name, url)
         except AttributeError:
-            print('Check the default variables in the config file.')
             if self.app.options.debug:
                 print('\n', traceback.format_exc())
+            else:
+                print('Check the default variables in the config file.')
 
         parser = configparser.ConfigParser()
 
         try:
             parser.read(self.get_configuration_file())
         except configparser.Error:
-            print(f'Bad configuration file. '
-                  f'Please change configuration for provider: {self.get_name()}')
             if self.app.options.debug:
                 print('\n', traceback.format_exc())
+            else:
+                print(f'Bad configuration file. '
+                      f'Please change configuration for provider: '
+                      f'{self.get_name()}')
 
         if self.get_name() in parser.sections():
             location_config = parser[self.get_name()]
