@@ -29,3 +29,5 @@ or\
 `python3 app.py save-to-csv [provider id]`
 * Customize your location to get weather information\
 `python3 app.py config [provider id]`
+* To see the full traceback in the case of error, use --debug command\
+`python3 app.py --debug, python3 app.py config accu --debug, etc.`
