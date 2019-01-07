@@ -51,9 +51,10 @@ class App:
         try:
             shutil.rmtree(cache_dir)
         except FileNotFoundError:
-            print('The cache directory is empty or not found.')
             if self.options.debug:
                 print('\n', traceback.format_exc())
+            else:
+                print('The cache directory is empty or not found.')
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache.
