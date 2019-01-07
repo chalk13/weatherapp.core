@@ -5,6 +5,7 @@ import argparse
 import configparser
 import hashlib
 import time
+import traceback
 from collections import namedtuple
 from pathlib import Path
 
@@ -115,6 +116,8 @@ class WeatherProvider(Command):
             place_info = Place(name, url)
         except AttributeError:
             print('Check the default variables in the config file.')
+            if self.app.options.debug:
+                print('\n', traceback.format_exc())
 
         parser = configparser.ConfigParser()
 
@@ -123,6 +126,8 @@ class WeatherProvider(Command):
         except configparser.Error:
             print(f'Bad configuration file. '
                   f'Please change configuration for provider: {self.get_name()}')
+            if self.app.options.degub:
+                print('\n', traceback.format_exc())
 
         if self.get_name() in parser.sections():
             location_config = parser[self.get_name()]
