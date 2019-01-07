@@ -6,6 +6,7 @@ import os
 import sys
 import shutil
 import time
+import traceback
 from argparse import ArgumentParser
 from collections import namedtuple
 from pathlib import Path
@@ -31,6 +32,8 @@ class App:
         arg_parser.add_argument('command', help='Command', nargs='?')
         arg_parser.add_argument('--refresh', help='Bypass caches',
                                 action='store_true')
+        arg_parser.add_argument('--debug', help='Info for developer',
+                                action='store_true')
 
         return arg_parser
 
@@ -49,6 +52,8 @@ class App:
             shutil.rmtree(cache_dir)
         except FileNotFoundError:
             print('The cache directory is empty or not found.')
+            if self.options.debug:
+                print('\n', traceback.format_exc())
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache.
@@ -144,6 +149,7 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
+
         if remaining_args:
             weather_site = remaining_args[0]
 
