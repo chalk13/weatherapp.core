@@ -1,4 +1,4 @@
-"""Weather application TODO list.
+"""Weather application.
 """
 
 # TODO: add a command that shows the weather for tomorrow
