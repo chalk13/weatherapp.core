@@ -1,7 +1,7 @@
 """Weather providers for the weather application project.
 
 This file includes classes for each weather service provider.
-Providers: accuweather.com, rp5.ua
+Providers: accuweather.com, rp5.ua, sinoptik.ua
 """
 
 from bs4 import BeautifulSoup
@@ -106,7 +106,7 @@ class AccuWeatherProvider(WeatherProvider):
 
 class Rp5WeatherProvider(WeatherProvider):
 
-    """Weather provider for Rp5Weather site.
+    """Weather provider for Rp5 weather site.
     """
 
     name = config.RP5_PROVIDER_NAME
@@ -212,5 +212,105 @@ class Rp5WeatherProvider(WeatherProvider):
                 first_sentence = condition.text[:first_sentence_end]
                 start = first_sentence.rfind(',') + 2
                 weather_info['Wind'] = first_sentence[start:]
+
+        return weather_info
+
+
+class SinoptikWeatherProvider(WeatherProvider):
+
+    """Weather provider for Sinoptik weather site.
+    """
+
+    name = config.SINOPTIK_PROVIDER_NAME
+    title = config.SINOPTIK_PROVIDER_TITLE
+
+    def get_default_location(self):
+        """Default location name."""
+        return config.DEFAULT_NAME
+
+    def get_default_url(self):
+        """Default location url."""
+        return config.DEFAULT_URL_SINOPTIK
+
+    def get_locations_sinoptik(self, locations_url: str, refresh: bool = False) -> list:
+        """Return a list of locations and related urls."""
+
+        locations_page = self.get_page_from_server(locations_url, refresh=refresh)
+        soup = BeautifulSoup(locations_page, 'html.parser')
+
+        locations = []
+        continents = soup.find('div', style='font-size:12px;')
+        if soup.find('div', style='font-size:12px;'):
+            for continent in continents.find_all('a'):
+                location = continent.text
+                url = continent.attrs['href']
+                url = f'https:{url}'
+                locations.append((location, url))
+        else:
+            places = soup.find('div', class_='mapRightCol')
+            if places:
+                for place in places.find_all('a'):
+                    if place.find(class_='') or place.find(class_='selected'):
+                        continue
+                    else:
+                        location = place.text
+                        url = place.attrs['href']
+                        url = f'https:{url}'
+                        locations.append((location, url))
+
+        return locations
+
+    def configuration(self, command: str, refresh: bool = False):
+        """Set the location for which to display the weather."""
+
+        locations = self.get_locations_sinoptik(f'{config.BROWSE_LOCATIONS[command]}',
+                                                refresh=refresh)
+
+        while locations:
+            for index, location in enumerate(locations):
+                if index % 5 == 0:
+                    print()
+                print(f'{index + 1}) {location[0]}', end=' ')
+            print()
+            try:
+                selected_index = int(input('Please select location: '))
+                location = locations[selected_index - 1]
+                locations = self.get_locations_sinoptik(location[1], refresh=refresh)
+            except IndexError:
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
+                else:
+                    print('The user entered too big number.\n'
+                          'Please use an integer number from the list below.')
+            except ValueError:
+                if self.app.options.debug:
+                    print('\n', traceback.format_exc())
+                else:
+                    print('The user did not enter an integer number.\n'
+                          'Please use an integer number from the list below.')
+
+        self.save_configuration(*location)
+
+    @staticmethod
+    def get_weather_info(page: str) -> dict:
+        """Return information collected from SINOPTIK."""
+
+        weather_page = BeautifulSoup(page, 'html.parser')
+        current_day_weather = weather_page.find('div', class_='imgBlock')
+        current_day_temperature = weather_page.find('div', class_='main loaded')
+
+        weather_info = {}
+        if current_day_weather:
+            temperature = current_day_weather.find('p', class_='today-temp')
+            if temperature:
+                weather_info['Temperature'] = temperature.text
+        if current_day_weather:
+            condition = current_day_weather.find('img', alt=True)
+            if condition:
+                weather_info['Condition'] = condition['alt']
+        if current_day_temperature:
+            min_temp = current_day_temperature.find('div', class_='min')
+            max_temp = current_day_temperature.find('div', class_='max')
+            weather_info['Expect'] = f'{min_temp.text}... {max_temp.text}'
 
         return weather_info
