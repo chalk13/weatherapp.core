@@ -12,9 +12,15 @@ RP5_PROVIDER_NAME = 'rp5'  # provider id
 RP5_PROVIDER_TITLE = 'RP5'  # provider title
 DEFAULT_URL_RP5 = 'http://rp5.ua/Weather_in_Kiev,_Kyiv'
 
+# SINOPTIK provider related configuration
+SINOPTIK_PROVIDER_NAME = 'sinoptik'  # provider id
+SINOPTIK_PROVIDER_TITLE = 'SINOPTIK'  # provider title
+DEFAULT_URL_SINOPTIK = 'https://ua.sinoptik.ua/погода-київ'
+
 DEFAULT_NAME = 'Kyiv'  # default location, common for each provider
 BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
-                    'rp5': 'http://rp5.ua/Weather_in_the_world'}
+                    'rp5': 'http://rp5.ua/Weather_in_the_world',
+                    'sinoptik': 'https://ua.sinoptik.ua/україна'}
 
 CONFIG_FILE = 'weatherapp.ini'  # configuration file name
 
