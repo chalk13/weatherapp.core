@@ -2,12 +2,14 @@
 
 from commands import Configure, Providers
 
+from abstract import Manager
 
-class CommandManager:
+
+class CommandManager(Manager):
     """ Manager for app commands."""
 
     def __init__(self):
-        self.commands = {}
+        self._commands = {}
         self._load_commands()
 
     def add(self, name, command):
@@ -18,7 +20,7 @@ class CommandManager:
         :type command: abstract.Command
         """
 
-        self.commands[name] = command
+        self._commands[name] = command
 
     def _load_commands(self):
         """Load all external (from an entry points) commands."""
@@ -35,7 +37,10 @@ class CommandManager:
         :type name: str
         """
 
-        return self.commands.get(name, None)
+        return self._commands.get(name, None)
 
     def __contains__(self, name):
-        return name in self.commands
+        return name in self._commands
+
+    def __getitem__(self, item):
+        return self._commands[item]
