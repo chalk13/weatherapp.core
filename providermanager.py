@@ -2,9 +2,10 @@
 
 from providers import AccuWeatherProvider, Rp5WeatherProvider
 from providers import SinoptikWeatherProvider
+from abstract import Manager
 
 
-class ProviderManager:
+class ProviderManager(Manager):
     """Discovers registered providers and load them."""
 
     def __init__(self):
