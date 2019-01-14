@@ -31,3 +31,6 @@ or\
 `python3 app.py config [provider id]`
 * To see the full traceback in the case of error, use --debug command\
 `python3 app.py --debug, python3 app.py config accu --debug, etc.`
+* For setting log level of the program use the following:\
+`-v - log messages starting from level INFO`\
+`-vv - log messages starting from level DEBUG`
