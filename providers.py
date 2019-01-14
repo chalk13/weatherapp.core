@@ -62,7 +62,7 @@ class AccuWeatherProvider(WeatherProvider):
                 else:
                     self.app.logger.error(msg)
             except ValueError:
-                msg = 'The user did not enter an integer number.'
+                msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
                     self.app.logger.exception(msg)
                 else:
@@ -170,13 +170,13 @@ class Rp5WeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_rp5(location[1], refresh=refresh)
             except IndexError:
-                msg = 'The user entered too big number.'
+                msg = 'The user entered too big number'
                 if self.app.options.debug:
                     self.app.logger.exception(msg)
                 else:
                     self.app.logger.error(msg)
             except ValueError:
-                msg = 'The user did not enter an integer number.'
+                msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
                     self.app.logger.exception(msg)
                 else:
@@ -276,13 +276,13 @@ class SinoptikWeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_sinoptik(location[1], refresh=refresh)
             except IndexError:
-                msg = 'The user entered too big number.'
+                msg = 'The user entered too big number'
                 if self.app.options.debug:
                     self.app.logger.exception(msg)
                 else:
                     self.app.logger.error(msg)
             except ValueError:
-                msg = 'The user did not enter an integer number.'
+                msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
                     self.app.logger.exception(msg)
                 else:
