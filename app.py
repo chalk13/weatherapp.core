@@ -7,7 +7,6 @@ import os
 import sys
 import shutil
 import time
-import traceback
 from argparse import ArgumentParser
 from collections import namedtuple
 from pathlib import Path
@@ -79,10 +78,11 @@ class App:
         try:
             shutil.rmtree(cache_dir)
         except FileNotFoundError:
+            msg = 'The cache directory is empty or not found.'
             if self.options.debug:
-                print('\n', traceback.format_exc())
+                self.logger.exception(msg)
             else:
-                print('The cache directory is empty or not found.')
+                self.logger.error(msg)
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache.

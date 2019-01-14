@@ -7,7 +7,6 @@ Providers: accuweather.com, rp5.ua, sinoptik.ua
 from bs4 import BeautifulSoup
 
 import config
-import traceback
 from abstract import WeatherProvider
 
 
@@ -57,17 +56,17 @@ class AccuWeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_accu(location[1], refresh=refresh)
             except IndexError:
+                msg = 'The user enter too big number'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user entered too big number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
             except ValueError:
+                msg = 'The user did not enter an integer number.'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user did not enter an integer number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
 
         self.save_configuration(*location)
 
@@ -171,17 +170,17 @@ class Rp5WeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_rp5(location[1], refresh=refresh)
             except IndexError:
+                msg = 'The user entered too big number.'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user entered too big number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
             except ValueError:
+                msg = 'The user did not enter an integer number.'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user did not enter an integer number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
 
         self.save_configuration(*location)
 
@@ -277,17 +276,17 @@ class SinoptikWeatherProvider(WeatherProvider):
                 location = locations[selected_index - 1]
                 locations = self.get_locations_sinoptik(location[1], refresh=refresh)
             except IndexError:
+                msg = 'The user entered too big number.'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user entered too big number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
             except ValueError:
+                msg = 'The user did not enter an integer number.'
                 if self.app.options.debug:
-                    print('\n', traceback.format_exc())
+                    self.app.logger.exception(msg)
                 else:
-                    print('The user did not enter an integer number.\n'
-                          'Please use an integer number from the list below.')
+                    self.app.logger.error(msg)
 
         self.save_configuration(*location)
 
