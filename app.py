@@ -3,6 +3,7 @@
 import csv
 import html
 import logging
+import colorlog
 import os
 import sys
 import shutil
@@ -19,7 +20,7 @@ import config
 class App:
     """Weather aggregator application."""
 
-    logger = logging.getLogger(__name__)
+    logger = colorlog.getLogger(__name__)
     LOG_LEVEL_MAP = {0: logging.WARNING,
                      1: logging.INFO,
                      2: logging.DEBUG}
@@ -52,15 +53,28 @@ class App:
     def configure_logging(self):
         """Create logging handlers for any log output."""
 
-        root_logger = logging.getLogger('')
-        root_logger.setLevel(logging.DEBUG)
+        root_logger = colorlog.getLogger('')
+        root_logger.setLevel(colorlog.colorlog.logging.DEBUG)
 
-        console = logging.StreamHandler()
+        console = colorlog.StreamHandler()
         console_level = self.LOG_LEVEL_MAP.get(self.options.verbose_level,
                                                logging.WARNING)
         console.setLevel(console_level)
-        formatter = logging.Formatter(config.DEFAULT_MESSAGE_FORMAT,
-                                      '%Y-%m-%d %H:%M:%S %p')
+        formatter = colorlog.ColoredFormatter(
+            config.DEFAULT_MESSAGE_FORMAT,
+            datefmt='%Y-%m-%d %H:%M:%S',
+            reset=True,
+            log_colors={
+                'DEBUG': 'cyan',
+                'INFO': 'green',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
+                'CRITICAL': 'red,bg_white',
+            },
+            secondary_log_colors={},
+            style='%'
+        )
+
         console.setFormatter(formatter)
         root_logger.addHandler(console)
 
@@ -78,7 +92,7 @@ class App:
         try:
             shutil.rmtree(cache_dir)
         except FileNotFoundError:
-            msg = 'The cache directory is empty or not found.'
+            msg = 'The cache directory is empty or not found'
             if self.options.debug:
                 self.logger.exception(msg)
             else:
