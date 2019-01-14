@@ -3,7 +3,6 @@
 import csv
 import html
 import logging
-import colorlog
 import os
 import sys
 import shutil
@@ -11,6 +10,8 @@ import time
 from argparse import ArgumentParser
 from collections import namedtuple
 from pathlib import Path
+
+import colorlog
 
 from providermanager import ProviderManager
 from commandmanager import CommandManager
