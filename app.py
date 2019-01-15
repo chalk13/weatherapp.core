@@ -51,16 +51,18 @@ class App:
 
         return arg_parser
 
-    def configure_logging(self):
+    def configure_logging(self, fname='weatheapp_log.log'):
         """Create logging handlers for any log output."""
 
         root_logger = colorlog.getLogger('')
         root_logger.setLevel(colorlog.colorlog.logging.DEBUG)
 
+        handler = logging.FileHandler(fname)
         console = colorlog.StreamHandler()
         console_level = self.LOG_LEVEL_MAP.get(self.options.verbose_level,
                                                logging.WARNING)
         console.setLevel(console_level)
+        handler.setLevel(console_level)
         formatter = colorlog.ColoredFormatter(
             config.DEFAULT_MESSAGE_FORMAT,
             datefmt='%Y-%m-%d %H:%M:%S',
@@ -77,7 +79,9 @@ class App:
         )
 
         console.setFormatter(formatter)
+        handler.setFormatter(formatter)
         root_logger.addHandler(console)
+        root_logger.addHandler(handler)
 
     @staticmethod
     def get_cache_directory():
