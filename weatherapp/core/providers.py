@@ -7,7 +7,7 @@ Providers: accuweather.com, rp5.ua, sinoptik.ua
 from bs4 import BeautifulSoup
 
 from weatherapp.core import config
-from abstract import WeatherProvider
+from weatherapp.core.abstract import WeatherProvider
 
 
 class AccuWeatherProvider(WeatherProvider):
