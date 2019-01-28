@@ -13,6 +13,7 @@ from pathlib import Path
 
 import colorlog
 
+from weatherapp.core.formatters import TableFormatter
 from weatherapp.core.providermanager import ProviderManager
 from weatherapp.core.commandmanager import CommandManager
 from weatherapp.core import config
@@ -26,10 +27,14 @@ class App:
                      1: logging.INFO,
                      2: logging.DEBUG}
 
-    def __init__(self):
+    def __init__(self, stdin=None, stdout=None, stderr=None):
+        self.stdin = stdin or sys.stdin
+        self.stdout = stdout or sys.stdout
+        self.stderr = stderr or sys.stderr
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
         self.commandmanager = CommandManager()
+        self.formatters = self._load_formatters()
 
     @staticmethod
     def _arg_parse():
@@ -43,6 +48,10 @@ class App:
         arg_parser.add_argument('--debug',
                                 help='Info for developer',
                                 action='store_true')
+        arg_parser.add_argument('-f', '--formatter',
+                                help='Output format, defaults to table',
+                                action='store',
+                                default='table')
         arg_parser.add_argument('-v', '--verbose',
                                 help='Increase verbosity of output',
                                 action='count',
@@ -157,35 +166,49 @@ class App:
         return place_info
 
     @staticmethod
-    def program_output(title: str, city: str, info: dict):
+    def _load_formatters():
+        return {'table': TableFormatter}
+
+    def program_output(self, title: str, city: str, info: dict):
         """Print the application output in readable form."""
 
-        length_column_1 = max(len(key) for key in info.keys())
-        length_column_2 = max(len(value) for value in info.values())
+        formatter = self.formatters.get(self.options.formatter, 'table')()
+        columns = [title, city]
 
-        print(f'{title}')
-        print('-'*len(title))
-        print(f'{city.upper()}')
+        self.stdout.write(formatter.emit(columns, info))
+        self.stdout.write('\n')
 
-        def border_line(column_1: int, column_2: int) -> str:
-            """Print a line for dividing information."""
+    def run_command(self, name, argv):
+        """Run command"""
 
-            line = ''.join(['+'] + ['-' * (column_1 + column_2 + 5)] + ['+'])
-            return line
+        command = self.commandmanager.get(name)
+        try:
+            command(self).run(argv)
+        except Exception:
+            msg = 'Error during command: %s run'
+            if self.options.debug:
+                self.logger.exception(msg, name)
+            else:
+                self.logger.error(msg, name)
 
-        def status_msg(msg: str, state: str) -> str:
-            """Print weather information."""
+    def run_provider(self, name, argv):
+        """Run specified provider."""
 
-            result = f"| {msg} {' ' * (length_column_1 - len(msg))}" \
-                     f"| {state} {' ' * (length_column_2 - len(state))}|\n"
-            return result
+        provider = self.providermanager.get(name)
+        if provider:
+            provider = provider(self)
+            self.program_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
 
-        print(border_line(length_column_1, length_column_2))
+    def run_providers(self, argv):
+        """Execute all available providers."""
 
-        for key, value in info.items():
-            print(status_msg(key, html.unescape(value)), end='')
-
-        print(border_line(length_column_1, length_column_2))
+        for provider in self.providermanager._providers.values():
+            provider = provider(self)
+            self.program_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
 
     def run(self, argv):
         """Run application.
@@ -200,6 +223,16 @@ class App:
         self.logger.debug('Got the following args: %s', argv)
         command_name = self.options.command
 
+        if not command_name:
+            # run all providers
+            return self.run_providers(remaining_args)
+
+        if command_name in self.commandmanager:
+            return self.run_command(command_name, remaining_args)
+
+        if command_name in self.providermanager:
+            return self.run_provider(command_name, remaining_args)
+
         if remaining_args:
             weather_site = remaining_args[0]
 
@@ -207,30 +240,6 @@ class App:
             self.clear_app_cache()
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
-
-        elif command_name in self.commandmanager:
-            command_factory = self.commandmanager.get(command_name)
-            try:
-                command_factory(self).run(remaining_args)
-            except Exception:
-                msg = 'Error during command: %s run'
-                if self.options.debug:
-                    self.logger.exception(msg, command_name)
-                else:
-                    self.logger.error(msg, command_name)
-
-        elif not command_name:
-            # run all weather providers by default
-            for provider in self.providermanager._providers.values():
-                self.program_output(provider.title,
-                                    provider(self).location,
-                                    provider(self).run(remaining_args))
-        elif command_name in self.providermanager:
-            # run specific provider
-            provider = self.providermanager[command_name]
-            self.program_output(provider.title,
-                                provider(self).location,
-                                provider(self).run(remaining_args))
         else:
             print('Unknown command provided.')
             sys.exit(1)
