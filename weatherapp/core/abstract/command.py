@@ -2,6 +2,7 @@
 
 import abc
 import argparse
+import sys
 
 
 class Command(abc.ABC):
@@ -11,8 +12,9 @@ class Command(abc.ABC):
     :type app: `app.App`
     """
 
-    def __init__(self, app):
+    def __init__(self, app, stdout=None):
         self.app = app
+        self.stdout = stdout or sys.stdout
 
     @staticmethod
     def get_argument_parser():
