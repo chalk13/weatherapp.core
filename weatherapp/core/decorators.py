@@ -1,6 +1,7 @@
 """Decorators for the weather application."""
 
 import time
+import sys
 from functools import lru_cache
 
 
@@ -30,7 +31,7 @@ def slow_down(seconds=1):
 @slow_down(seconds=3)
 def hello(name):
     """Hello test function."""
-    print(f'Hello {name}')
+    sys.stdout.write(f'Hello {name}\n')
 
 
 def timer(func):
@@ -39,8 +40,8 @@ def timer(func):
         start_time = time.perf_counter()  # performance counter
         result = func(*args, **kwargs)
         run_time = time.perf_counter() - start_time
-        print(f'Function ({func.__name__!r}) execution time '
-              f'is {run_time:.4f} seconds.')
+        sys.stdout.write(f'Function ({func.__name__!r}) execution time '
+                         f'is {run_time:.4f} seconds.\n')
         return result
 
     return wrapper
@@ -56,9 +57,9 @@ def get_arguments(func):
     """Prints all arguments passed to the function."""
     def wrapper(*args, **kwargs):
         for arg in args:
-            print(arg)
+            sys.stdout.write(f'{arg}\n')
         for key, value in kwargs.items():
-            print(f'The value of {key} is {value}')
+            sys.stdout.write(f'The value of {key} is {value}\n')
         return func(*args, **kwargs)
 
     return wrapper
@@ -67,8 +68,8 @@ def get_arguments(func):
 @get_arguments
 def print_arguments(first, second, third):
     """Print arguments test function."""
-    print(first + second)
-    print(third)
+    sys.stdout.write(f'{first + second}\n')
+    sys.stdout.write(f'{third}\n')
 
 
 print_arguments(5, 6, third=97)
@@ -87,14 +88,14 @@ def func_calls_counter(func):
 @func_calls_counter
 def print_anything():
     """Print_anything test function."""
-    print("Enter text to print here")
+    sys.stdout.write("Enter text to print here\n")
 
 
 print_anything()
 for item in range(3):
     print_anything()
 
-print(print_anything.counter)
+sys.stdout.write(f'{print_anything.counter}\n')
 
 
 # did not write my own decorator for caching
@@ -109,7 +110,7 @@ def fibonacci(n):
     return fibonacci(n-1) + fibonacci(n-2)
 
 
-print(f'The n-th Fibonacci number: {fibonacci(42)}')
+sys.stdout.write(f'The n-th Fibonacci number: {fibonacci(42)}\n')
 
 
 def singleton(cls):
