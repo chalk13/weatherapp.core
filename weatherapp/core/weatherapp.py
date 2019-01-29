@@ -6,3 +6,5 @@
 # TODO: fix start = first_sentence.rfind(',') + 2
 # TODO: write log info to diff files according to log level (DEBUG, ...)
 # TODO: change colorlog to loguru
+# TODO: change setup.py configuration
+# TODO: --formatter = table, list, CSV
