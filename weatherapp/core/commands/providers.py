@@ -10,6 +10,6 @@ class Providers(Command):
 
     def run(self, argv):
         """Prints the number and the provider name."""
-        print(f"Available providers (provider id):")
+        self.stdout.write(f"Available providers (provider id):\n")
         for number, provider in enumerate(self.app.providermanager._providers.values(), 1):
-            print(f'{number}. {provider.title} ({provider.name})')
+            self.stdout.write(f'{number}. {provider.title} ({provider.name})\n')
