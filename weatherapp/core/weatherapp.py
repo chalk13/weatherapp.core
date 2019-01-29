@@ -8,3 +8,4 @@
 # TODO: change colorlog to loguru
 # TODO: change setup.py configuration
 # TODO: --formatter = table, list, CSV
+# TODO: make corrections to README
