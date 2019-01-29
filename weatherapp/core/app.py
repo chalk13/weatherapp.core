@@ -1,7 +1,6 @@
 """Main module of the application."""
 
 import csv
-import html
 import logging
 import os
 import sys
