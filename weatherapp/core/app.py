@@ -240,7 +240,7 @@ class App:
         elif command_name == 'save-to-csv':
             self.write_info_to_csv(weather_site)
         else:
-            print('Unknown command provided.')
+            self.stdout.write('Unknown command provided. \n')
             sys.exit(1)
 
 
