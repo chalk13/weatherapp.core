@@ -5,14 +5,14 @@ from weatherapp.core.abstract import Manager
 
 
 class CommandManager(Manager):
-    """ Manager for app commands."""
+    """Manager for app commands."""
 
     def __init__(self):
         self._commands = {}
         self._load_commands()
 
     def add(self, name, command):
-        """ Registers command under specified name.
+        """Registers command under specified name.
         :param name: command name
         :type name: str
         :param command: command class
@@ -28,7 +28,7 @@ class CommandManager(Manager):
             self.add(command.name, command)
 
     def get(self, name):
-        """ Gets command from command registry.
+        """Gets command from command registry.
         Get registered command processor. Returns none if there is no
         such command registered. Raise ValueError if bad command value
         provided.
@@ -43,3 +43,7 @@ class CommandManager(Manager):
 
     def __getitem__(self, item):
         return self._commands[item]
+
+    def __iter__(self):
+        for key, value in self._commands.items():
+            yield key, value
