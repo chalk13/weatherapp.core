@@ -38,3 +38,7 @@ class ProviderManager(Manager):
 
     def __getitem__(self, item):
         return self._providers[item]
+
+    def __iter__(self):
+        for key, value in self._providers.items():
+            yield key, value
