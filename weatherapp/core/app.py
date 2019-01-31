@@ -203,7 +203,7 @@ class App:
     def run_providers(self, argv):
         """Execute all available providers."""
 
-        for provider in self.providermanager._providers.values():
+        for name, provider in self.providermanager:
             provider = provider(self)
             self.program_output(provider.title,
                                 provider.location,
