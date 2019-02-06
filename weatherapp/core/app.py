@@ -46,7 +46,8 @@ class App:
                                 action='store_true')
         arg_parser.add_argument('--debug',
                                 help='Info for developer',
-                                action='store_true')
+                                action='store_true',
+                                default=False)
         arg_parser.add_argument('-f', '--formatter',
                                 help='Output format, defaults to table',
                                 action='store',
