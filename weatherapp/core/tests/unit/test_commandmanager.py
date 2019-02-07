@@ -11,6 +11,7 @@ class CommandManagerTestCase(unittest.TestCase):
     """Unit test case for command manager."""
 
     def setUp(self):
+        """Contain set up info for every single test."""
         self.command_manager = CommandManager()
 
     def test_add(self):
