@@ -9,7 +9,6 @@ class Providers(Command):
     name = 'providers'
 
     def run(self, argv):
-        """Prints the number and the provider name."""
-        self.stdout.write(f"Available providers (provider id):\n")
-        for number, provider in enumerate(self.app.providermanager._providers.values(), 1):
-            self.stdout.write(f'{number}. {provider.title} ({provider.name})\n')
+        """Prints provider name and id."""
+        for provider in self.app.providermanager._providers.values():
+            self.stdout.write(f'{provider.title} ({provider.name})\n')
