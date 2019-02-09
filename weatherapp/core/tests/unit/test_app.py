@@ -8,6 +8,7 @@ class AppTestCase(unittest.TestCase):
     """Test application class methods."""
 
     def setUp(self):
+        """Contain set up info for every single test."""
         self.parser = App._arg_parse()
         self.formatter = App._load_formatters()
 
