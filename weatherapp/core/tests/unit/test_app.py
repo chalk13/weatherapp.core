@@ -9,6 +9,7 @@ class AppTestCase(unittest.TestCase):
 
     def setUp(self):
         self.parser = App._arg_parse()
+        self.formatter = App._load_formatters()
 
     def test_arg_parser(self):
         """Test application argument parser creation."""
@@ -32,6 +33,12 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(parsed_args.formatter, 'table')
         self.assertTrue(parsed_args.refresh)
         self.assertEqual(parsed_args.verbose_level, 1)
+
+    def test_load_formatters(self):
+        """Test application formatter loading"""
+
+        self.assertTrue(self.formatter)
+        self.assertIsInstance(self.formatter, dict)
 
 
 if __name__ == '__main__':
