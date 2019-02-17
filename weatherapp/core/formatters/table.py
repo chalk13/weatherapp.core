@@ -1,7 +1,10 @@
+"""Table formatter class for the weather application."""
+
+from typing import Union
+
 import prettytable
 
 from weatherapp.core.abstract import Formatter
-from typing import Union
 
 
 class TableFormatter(Formatter):
