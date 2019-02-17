@@ -1,3 +1,5 @@
+"""Unittests for App class"""
+
 import argparse
 import unittest
 
