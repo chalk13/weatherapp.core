@@ -18,11 +18,13 @@ class AccuWeatherProvider(WeatherProvider):
     name = config.ACCU_PROVIDER_NAME
     title = config.ACCU_PROVIDER_TITLE
 
-    def get_default_location(self):
+    @staticmethod
+    def get_default_location():
         """Default location name."""
         return config.DEFAULT_NAME
 
-    def get_default_url(self):
+    @staticmethod
+    def get_default_url():
         """Default location url."""
         return config.DEFAULT_URL_ACCU
 
@@ -111,11 +113,13 @@ class Rp5WeatherProvider(WeatherProvider):
     name = config.RP5_PROVIDER_NAME
     title = config.RP5_PROVIDER_TITLE
 
-    def get_default_location(self):
+    @staticmethod
+    def get_default_location():
         """Default location name."""
         return config.DEFAULT_NAME
 
-    def get_default_url(self):
+    @staticmethod
+    def get_default_url():
         """Default location url."""
         return config.DEFAULT_URL_RP5
 
@@ -126,7 +130,6 @@ class Rp5WeatherProvider(WeatherProvider):
         soup = BeautifulSoup(locations_page, 'html.parser')
 
         locations = []
-        # TODO: try rewrite logic in an easier way
         places = soup.find_all('div', class_='country_map_links')
         if not places:
             places = soup.find_all('a', class_='href20')
@@ -223,11 +226,13 @@ class SinoptikWeatherProvider(WeatherProvider):
     name = config.SINOPTIK_PROVIDER_NAME
     title = config.SINOPTIK_PROVIDER_TITLE
 
-    def get_default_location(self):
+    @staticmethod
+    def get_default_location():
         """Default location name."""
         return config.DEFAULT_NAME
 
-    def get_default_url(self):
+    @staticmethod
+    def get_default_url():
         """Default location url."""
         return config.DEFAULT_URL_SINOPTIK
 
