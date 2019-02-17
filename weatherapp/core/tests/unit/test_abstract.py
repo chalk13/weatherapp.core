@@ -1,3 +1,5 @@
+"""Unit tests for abstract classes."""
+
 import unittest
 from unittest.mock import patch
 
