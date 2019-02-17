@@ -1,9 +1,12 @@
+"""Unittests for Command manager class."""
+
 import unittest
 
 from weatherapp.core.commandmanager import CommandManager
 
 
 class ExampleCommand:
+    """Test class"""
     pass
 
 
