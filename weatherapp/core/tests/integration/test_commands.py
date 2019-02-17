@@ -1,3 +1,5 @@
+"""Integration tests for the weather application."""
+
 import unittest
 import io
 import sys
