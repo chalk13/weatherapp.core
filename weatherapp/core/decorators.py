@@ -101,13 +101,13 @@ sys.stdout.write(f'{print_anything.counter}\n')
 # did not write my own decorator for caching
 # just used the implementation from the standard library
 @lru_cache(maxsize=256)
-def fibonacci(n):
+def fibonacci(num):
     """Return n-th Fibonacci number."""
-    if n == 0:
+    if num == 0:
         return 0
-    if n == 1:
+    if num == 1:
         return 1
-    return fibonacci(n-1) + fibonacci(n-2)
+    return fibonacci(num-1) + fibonacci(num-2)
 
 
 sys.stdout.write(f'The n-th Fibonacci number: {fibonacci(42)}\n')
