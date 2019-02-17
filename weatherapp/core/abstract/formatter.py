@@ -1,3 +1,5 @@
+"""Abstract formatter class for the weather application."""
+
 import abc
 from typing import Union
 
