@@ -1,3 +1,5 @@
+"""Unittests for Provider manager class."""
+
 import unittest
 
 from weatherapp.core.providermanager import ProviderManager
