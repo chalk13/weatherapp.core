@@ -1,36 +1,43 @@
-# CONVENIENT PRESENTATION OF INFORMATION FROM VARIOUS WEATHER WEBSITES
+# WEATHER INFORMATION FROM VARIOUS WEBSITES
 ### MAIN PURPOSE
-> The main purpose of this project is to obtain real knowledge and practice of solving real problem.
+> The main purpose of this project is to get real and practical 
+knowledge in the parsing of weather websites, finding solutions 
+during development.
 ### IDEA
-> Combine and present information from different weather websites in one place and be able to view and compare them.
+> Combine and present information from different weather websites in 
+one place and be able to view and compare them.
 ### GOALS:
 1. Collect information from different weather websites.
 2. A simple interface to use the program. 
-3. Adding a new resource, feature will not change the implementation of the main functionality.
+3. Adding a new resource, feature will not change the implementation of
+the main functionality.
 4. Possibility of further development of the program.
 
-*RESOURCES:* [AccuWeather](https://www.accuweather.com/), [Rp5](http://rp5.ua/), etc.\
-*TOOLS:* Python3, ...
+*RESOURCES:* [AccuWeather](https://www.accuweather.com/),
+[Rp5](http://rp5.ua/), [Sinoptik](https://ua.sinoptik.ua)\
+*TOOL:* Python3
 ***
-### Commands for the weather application:
+### Installation of weather application:
+TODO
+### Commands available in the weather application:
 * Run the weather application for all providers\
-`python3 app.py`
+`wfapp`
 * Get a list of all providers\
-`python3 app.py providers`
+`wfapp providers`
 * Get weather information from a specific provider\
-`python3 app.py [provider id]`
+`wfapp [provider id]`
 * Update cache\
-`python3 app.py --refresh`\
+`wfapp --refresh`\
 or\
-`python3 app.py [provider id] --refresh`
+`wfapp [provider id] --refresh`
 * Clear cache\
-`python3 app.py clear-cache`
+`wfapp clear-cache`
 * Save the weather information to the file\
-`python3 app.py save-to-csv [provider id]`
+`wfapp save-to-csv [provider id]`
 * Customize your location to get weather information\
-`python3 app.py config [provider id]`
+`wfapp config [provider id]`
 * To see the full traceback in the case of error, use --debug command\
-`python3 app.py --debug, python3 app.py config accu --debug, etc.`
+`wfapp --debug, wfapp config accu --debug, etc.`
 * For setting log level of the program use the following:\
 `-v - log messages starting from level INFO`\
 `-vv - log messages starting from level DEBUG`
