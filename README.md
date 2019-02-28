@@ -1,8 +1,5 @@
 # WEATHER INFORMATION FROM VARIOUS WEBSITES
-### MAIN PURPOSE
-> The main purpose of this project is to get real and practical 
-knowledge in the parsing of weather websites, finding solutions 
-during development.
+
 ### IDEA
 > Combine and present information from different weather websites in 
 one place and be able to view and compare them.
@@ -14,12 +11,12 @@ the main functionality.
 4. Possibility of further development of the program.
 
 *RESOURCES:* [AccuWeather](https://www.accuweather.com/),
-[Rp5](http://rp5.ua/), [Sinoptik](https://ua.sinoptik.ua)\
-*TOOL:* Python3
+[Rp5](http://rp5.ua/), [Sinoptik](https://ua.sinoptik.ua)
+
 ***
-### Installation of weather application:
+### Installation:
 TODO
-### Commands available in the weather application:
+### Usage:
 * Run the weather application for all providers\
 `wfapp`
 * Get a list of all providers\
