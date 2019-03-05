@@ -15,26 +15,29 @@ the main functionality.
 
 ***
 ### Installation:
-TODO
+Download the repository to your machine and use the following command
+to locally install the package:\
+`$ pip install .`
 ### Usage:
-* Run the weather application for all providers\
-`wfapp`
-* Get a list of all providers\
-`wfapp providers`
-* Get weather information from a specific provider\
-`wfapp [provider id]`
-* Update cache\
-`wfapp --refresh`\
+* Run the weather application for all providers:\
+`$ wfapp`
+* Get a list of all providers:\
+`$ wfapp providers`
+* Get weather information from a specific provider:\
+`$ wfapp [provider id]`
+* Update cache:\
+`$ wfapp --refresh`\
 or\
-`wfapp [provider id] --refresh`
-* Clear cache\
-`wfapp clear-cache`
-* Save the weather information to the file\
-`wfapp save-to-csv [provider id]`
-* Customize your location to get weather information\
-`wfapp config [provider id]`
-* To see the full traceback in the case of error, use --debug command\
-`wfapp --debug, wfapp config accu --debug, etc.`
+`$ wfapp [provider id] --refresh`
+* Clear cache:\
+`$ wfapp clear-cache`
+* Save the weather information to the file:\
+`$ wfapp save-to-csv [provider id]`
+* Customize your location to get weather information:\
+`$ wfapp config [provider id]`
+* To see the full traceback in the case of error, use --debug command:\
+`$ wfapp --debug`\
+`$ wfapp config [provider id] --debug`
 * For setting log level of the program use the following:\
 `-v - log messages starting from level INFO`\
 `-vv - log messages starting from level DEBUG`
