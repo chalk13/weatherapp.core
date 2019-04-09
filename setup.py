@@ -14,5 +14,6 @@ setup(
         'bs4',
         'requests',
         'colorlog',
+        'prettytable',
     ]
 )
