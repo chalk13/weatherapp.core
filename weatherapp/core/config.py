@@ -29,7 +29,7 @@ DEFAULT_URL_SINOPTIK = 'https://ua.sinoptik.ua/погода-київ'
 DEFAULT_NAME = 'Kyiv'  # default location, common for each provider
 BROWSE_LOCATIONS = {'accu': 'https://www.accuweather.com/en/browse-locations',
                     'rp5': 'http://rp5.ua/Weather_in_the_world',
-                    'sinoptik': 'https://ua.sinoptik.ua/україна'}
+                    'sinoptik': 'https://ua.sinoptik.ua//погода-європа'}
 
 CONFIG_FILE = 'weatherapp.ini'  # configuration file name
 

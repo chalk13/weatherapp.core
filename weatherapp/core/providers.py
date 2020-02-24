@@ -243,24 +243,13 @@ class SinoptikWeatherProvider(WeatherProvider):
         soup = BeautifulSoup(locations_page, 'html.parser')
 
         locations = []
-        continents = soup.find('div', style='font-size:12px;')
-        if soup.find('div', style='font-size:12px;'):
-            for continent in continents.find_all('a'):
-                location = continent.text
-                url = continent.attrs['href']
+        places = soup.find('div', class_='mapRightCol')
+        if places:
+            for place in places.find_all('a'):
+                location = place.text
+                url = place.attrs['href']
                 url = f'https:{url}'
                 locations.append((location, url))
-        else:
-            places = soup.find('div', class_='mapRightCol')
-            if places:
-                for place in places.find_all('a'):
-                    if place.find(class_='') or place.find(class_='selected'):
-                        continue
-                    else:
-                        location = place.text
-                        url = place.attrs['href']
-                        url = f'https:{url}'
-                        locations.append((location, url))
 
         return locations
 
