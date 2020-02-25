@@ -76,31 +76,31 @@ class AccuWeatherProvider(WeatherProvider):
         """Return information collected from AccuWeather."""
 
         weather_page = BeautifulSoup(page, 'html.parser')
-        current_day_selection = weather_page.find('li', {'class': ['day current first cl',
-                                                                   'night current first cl']})
+        current_day_selection = weather_page.find_all('a', class_='current')
 
         weather_info = {}
         if current_day_selection:
-            current_day_url = current_day_selection.find('a').attrs['href']
+            current_day_url = current_day_selection[0].get('href')
+            current_day_url = f'https://www.accuweather.com/{current_day_url}'
             if current_day_url:
                 current_day_page = self.get_page_from_server(current_day_url,
                                                              refresh=refresh)
                 if current_day_page:
                     current_day = BeautifulSoup(current_day_page, 'html.parser')
-                    weather_details = current_day.find('div', attrs={'id': 'detail-now'})
-                    temp = weather_details.find('span', class_='large-temp')
-                    if temp:
-                        weather_info['Temperature'] = temp.text
-                    condition = weather_details.find('span', class_='cond')
+                    temp = current_day.find('div', class_='temperatures')
+                    curr_temp = temp.find('p', class_='value')
+                    if curr_temp:
+                        weather_info['Temperature'] = curr_temp.text.strip()
+                    condition = current_day.find('div', class_='phrase')
                     if condition:
                         weather_info['Condition'] = condition.text
-
-                    feel_temp = weather_details.find('span', class_='small-temp')
+                    feel_temp = temp.find('p', class_='realFeel top')
                     if feel_temp:
-                        weather_info['RealFeel'] = feel_temp.text
-                    wind_info = weather_details.find_all('li', class_='wind')
-                    if wind_info:
-                        weather_info['Wind'] = ' '.join(map(lambda t: t.text.strip(), wind_info))
+                        curr_feel_temp = ''.join(i for i in feel_temp.text if i.isdigit())
+                        if '-' in curr_feel_temp:
+                            weather_info['RealFeel'] = f'-{curr_feel_temp}°'
+                        else:
+                            weather_info['RealFeel'] = f'{curr_feel_temp}°'
 
         return weather_info
 
