@@ -12,8 +12,8 @@ setup(
     },
     install_requires=[
         'bs4',
-        'requests',
-        'colorlog',
+        'loguru',
         'prettytable',
+        'requests'
     ]
 )

@@ -3,12 +3,13 @@
 import abc
 import configparser
 import hashlib
-import time
 import sys
+import time
 from collections import namedtuple
 from pathlib import Path
 
 import requests
+from loguru import logger
 
 from weatherapp.core import config
 from weatherapp.core.abstract.command import Command
@@ -93,9 +94,9 @@ class WeatherProvider(Command):
         except AttributeError:
             msg = 'Error while receiving location configuration'
             if self.app.options.debug:
-                self.app.logger.exception(msg)
+                logger.exception(msg)
             else:
-                self.app.logger.error(msg)
+                logger.error(msg)
 
         parser = configparser.ConfigParser()
 
@@ -106,9 +107,9 @@ class WeatherProvider(Command):
                   f'Please change configuration for provider:' \
                   f'{self.get_name()}'
             if self.app.options.debug:
-                self.app.logger.exception(msg)
+                logger.exception(msg)
             else:
-                self.app.logger.error(msg)
+                logger.error(msg)
 
         if self.get_name() in parser.sections():
             location_config = parser[self.get_name()]

@@ -5,6 +5,7 @@ Providers: accuweather.com, rp5.ua, sinoptik.ua
 """
 
 from bs4 import BeautifulSoup
+from loguru import logger
 
 from weatherapp.core import config
 from weatherapp.core.abstract import WeatherProvider
@@ -60,15 +61,15 @@ class AccuWeatherProvider(WeatherProvider):
             except IndexError:
                 msg = 'The user enter too big number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
             except ValueError:
                 msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
 
         self.save_configuration(*location)
 
@@ -175,15 +176,15 @@ class Rp5WeatherProvider(WeatherProvider):
             except IndexError:
                 msg = 'The user entered too big number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
             except ValueError:
                 msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
 
         self.save_configuration(*location)
 
@@ -272,15 +273,15 @@ class SinoptikWeatherProvider(WeatherProvider):
             except IndexError:
                 msg = 'The user entered too big number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
             except ValueError:
                 msg = 'The user did not enter an integer number'
                 if self.app.options.debug:
-                    self.app.logger.exception(msg)
+                    logger.exception(msg)
                 else:
-                    self.app.logger.error(msg)
+                    logger.error(msg)
 
         self.save_configuration(*location)
 

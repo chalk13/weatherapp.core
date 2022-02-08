@@ -2,12 +2,6 @@
 
 # application default verbose and log levels
 DEFAULT_VERBOSE_LEVEL = 0
-# date and time, log level, log object name, message
-DEFAULT_MESSAGE_FORMAT = '%(green)s %(asctime)s : ' \
-                         '%(log_color)s %(levelname)s : ' \
-                         '%(blue)s %(name)s : ' \
-                         '%(log_color)s %(message)s' \
-                         '%(reset)s'
 
 FAKE_MOZILLA_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'
 

@@ -1,7 +1,6 @@
 """Main module of the application."""
 
 import csv
-import logging
 import os
 import sys
 import shutil
@@ -10,7 +9,7 @@ from argparse import ArgumentParser
 from collections import namedtuple
 from pathlib import Path
 
-import colorlog
+from loguru import logger
 
 from weatherapp.core.formatters import TableFormatter
 from weatherapp.core.providermanager import ProviderManager
@@ -21,10 +20,9 @@ from weatherapp.core import config
 class App:
     """Weather aggregator application."""
 
-    logger = colorlog.getLogger(__name__)
-    LOG_LEVEL_MAP = {0: logging.WARNING,
-                     1: logging.INFO,
-                     2: logging.DEBUG}
+    # LOG_LEVEL_MAP = {0: logging.WARNING,
+    #                  1: logging.INFO,
+    #                  2: logging.DEBUG}
 
     def __init__(self, stdin=None, stdout=None, stderr=None):
         self.stdin = stdin or sys.stdin
@@ -60,37 +58,10 @@ class App:
 
         return arg_parser
 
-    def configure_logging(self, fname='weatheapp_log.log'):
-        """Create logging handlers for any log output."""
+    def configure_logging(self, fname='weatheapp'):
+        """Set up logging for any log output."""
 
-        root_logger = colorlog.getLogger('')
-        root_logger.setLevel(colorlog.colorlog.logging.DEBUG)
-
-        handler = logging.FileHandler(fname)
-        console = colorlog.StreamHandler()
-        console_level = self.LOG_LEVEL_MAP.get(self.options.verbose_level,
-                                               logging.WARNING)
-        console.setLevel(console_level)
-        handler.setLevel(console_level)
-        formatter = colorlog.ColoredFormatter(
-            config.DEFAULT_MESSAGE_FORMAT,
-            datefmt='%Y-%m-%d %H:%M:%S',
-            reset=True,
-            log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red,bg_white',
-            },
-            secondary_log_colors={},
-            style='%'
-        )
-
-        console.setFormatter(formatter)
-        handler.setFormatter(formatter)
-        root_logger.addHandler(console)
-        root_logger.addHandler(handler)
+        logger.add(f'{fname}_{{time:MM:DD}}.log', retention='5 days')
 
     @staticmethod
     def get_cache_directory():
@@ -108,9 +79,9 @@ class App:
         except FileNotFoundError:
             msg = 'The cache directory is empty or not found'
             if self.options.debug:
-                self.logger.exception(msg)
+                logger.exception(msg)
             else:
-                self.logger.error(msg)
+                logger.error(msg)
 
     def delete_invalid_cache(self):
         """Delete all invalid (old) cache.
@@ -185,11 +156,11 @@ class App:
         try:
             command(self).run(argv)
         except Exception:
-            msg = 'Error during command: %s run'
+            msg = f'Error during command: {name} run'
             if self.options.debug:
-                self.logger.exception(msg, name)
+                logger.exception(msg)
             else:
-                self.logger.error(msg, name)
+                logger.error(msg)
 
     def run_provider(self, name, argv):
         """Run specified provider."""
@@ -220,7 +191,7 @@ class App:
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         self.configure_logging()
-        self.logger.debug('Got the following args: %s', argv)
+        logger.debug(f'Got the following args: {argv}')
         command_name = self.options.command
 
         if not command_name:
