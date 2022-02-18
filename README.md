@@ -1,4 +1,6 @@
-# WEATHER INFORMATION FROM VARIOUS WEBSITES
+![Build Status - Pylint](https://github.com/Mazzart/weatherapp.core/workflows/Super-Linter/badge.svg)
+
+# Tool to get the current weather
 
 ### IDEA
 > Combine and present information from different weather websites in 
