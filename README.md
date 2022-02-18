@@ -1,4 +1,4 @@
-![Build Status - super-linter](https://github.com/Mazzart/weatherapp.core/workflows/super-linter/badge.svg)
+![Build Status - Super-Linter](https://github.com/Mazzart/weatherapp.core/workflows/Super-Linter/badge.svg)
 
 # Tool to get the current weather
 
