@@ -1,11 +1,10 @@
-![Build Status - Pylint](https://github.com/Mazzart/weatherapp.core/workflows/Super-Linter/badge.svg)
+![Build Status - super-linter](https://github.com/Mazzart/weatherapp.core/workflows/super-linter/badge.svg)
 
 # Tool to get the current weather
 
-### IDEA
 > Combine and present information from different weather websites in 
 one place and be able to view and compare them.
-### GOALS:
+### Functionality:
 1. Collect information from different weather websites.
 2. A simple interface to use the program. 
 3. Adding a new resource, feature will not change the implementation of
