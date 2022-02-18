@@ -1,8 +1,5 @@
 """Constants for the weather application project."""
 
-# application default verbose and log levels
-DEFAULT_VERBOSE_LEVEL = 0
-
 FAKE_MOZILLA_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6)'
 
 # AccuWeather provider related configuration

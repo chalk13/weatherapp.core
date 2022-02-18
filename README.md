@@ -40,6 +40,3 @@ or\
 * To see the full traceback in the case of error, use --debug command:\
 `$ wfapp --debug`\
 `$ wfapp config [provider id] --debug`
-* For setting log level of the program use the following:\
-`-v - log messages starting from level INFO`\
-`-vv - log messages starting from level DEBUG`

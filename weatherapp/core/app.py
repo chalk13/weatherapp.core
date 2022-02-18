@@ -20,10 +20,6 @@ from weatherapp.core import config
 class App:
     """Weather aggregator application."""
 
-    # LOG_LEVEL_MAP = {0: logging.WARNING,
-    #                  1: logging.INFO,
-    #                  2: logging.DEBUG}
-
     def __init__(self, stdin=None, stdout=None, stderr=None):
         self.stdin = stdin or sys.stdin
         self.stdout = stdout or sys.stdout
@@ -50,11 +46,6 @@ class App:
                                 help='Output format, defaults to table',
                                 action='store',
                                 default='table')
-        arg_parser.add_argument('-v', '--verbose',
-                                help='Increase verbosity of output',
-                                action='count',
-                                dest='verbose_level',
-                                default=config.DEFAULT_VERBOSE_LEVEL)
 
         return arg_parser
 
