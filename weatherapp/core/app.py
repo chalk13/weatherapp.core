@@ -49,7 +49,8 @@ class App:
 
         return arg_parser
 
-    def configure_logging(self, fname='weatheapp'):
+    @staticmethod
+    def configure_logging(fname='weatheapp'):
         """Set up logging for any log output."""
 
         logger.add(f'{fname}_{{time:MM:DD}}.log', retention='5 days')
