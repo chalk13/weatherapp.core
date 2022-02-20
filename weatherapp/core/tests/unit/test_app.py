@@ -30,12 +30,11 @@ class AppTestCase(unittest.TestCase):
     def test_arg_parser_arg(self):
         """Test application argument parser"""
 
-        parsed_args = self.parser.parse_args(['accu', '--debug', '--refresh', '-v'])
+        parsed_args = self.parser.parse_args(['accu', '--debug', '--refresh'])
         self.assertEqual(parsed_args.command, 'accu')
         self.assertTrue(parsed_args.debug)
         self.assertEqual(parsed_args.formatter, 'table')
         self.assertTrue(parsed_args.refresh)
-        self.assertEqual(parsed_args.verbose_level, 1)
 
     def test_load_formatters(self):
         """Test application formatter loading"""
